@@ -1,0 +1,174 @@
+#! /usr/bin/env bash
+
+# Formatting
+RESET="\033[0m" # Reset all foramting styles and colors
+BOLD="\033[1m"
+BOLDR="\033[22m" #Reset bold only styles
+ERASE="\033[1A\033[2K"
+
+# Colors
+RED="\033[31m"
+GREEN="\033[32m"
+YELLOW="\033[33m"
+
+verbose=false
+version=1.0.0
+limos_repo_section="[limos-main-repo]\nSigLevel = Optional DatabaseOptional\nServer = https://gitlab.com/limakos/"'$repo'"/-/blob/master/"'$arch'
+dynamic_theme=false
+
+for arg in "$@"
+do
+    case $arg in
+        --version)
+            echo "LimOS install script version: $version"
+            exit
+            ;;
+        --verbose)
+            verbose=true
+            ;;
+    esac
+done
+
+echo -e "#######${BOLD}${YELLOW} INFO ${RESET}###########################################################"
+echo -e "# ${BOLD}LimOS${BOLDR} is not another linux distribution. It's just an installation  #"
+echo "# script for Arch Linux that will install xmonad - tilling window     #"
+echo "# manager that i'm using and my configuration files. In the future i  #"
+echo "# will try to add support for more window managers.                   #"
+echo "#######################################################################"
+
+while true; do
+    echo -n -e "${BOLD}Do you want to continue? (Yy Nn): ${BOLDR}"
+    read choice
+
+    case $choice in
+        [Yy]* ) break;;
+        [Nn]* ) exit;;
+        * ) echo "Please answer yes or no."
+    esac
+done
+
+echo -e "\n\n#######${BOLD}${YELLOW} INFO ${RESET}##################################################################"
+echo "# Dynamic theme is something i implemented in my desktop. It's using cron job #"
+echo "# to change wallpaper and theme of desktop every 2 hours. I took colors       #" 
+echo "# from each wallpaper to match it and put in seperate files then i made a     #" 
+echo "# script that will take this colors and apply it in configuration files.      #"
+echo "###############################################################################"
+
+while true; do
+    echo -n -e "${BOLD}Do you want dynamic theme to be turned on? (Yy Nn): ${BOLDR}"
+    read choice
+
+    case $choice in
+        [Yy]* ) dynamic_theme=true; break;;
+        [Nn]* ) break;;
+        * ) echo "Please answer yes or no."
+    esac
+done
+
+if [[ ! $(sudo echo 0) ]]; then exit; fi
+
+err () {
+    echo -e "${ERASE}${RED}$1: "
+    echo -e "${RESET}$(cat error.txt)"
+    exit
+}
+
+echo -e "\n\n###${BOLD}${YELLOW} INFO ${RESET}###########"
+echo -e "# ${BOLD}Installing LimOS${BOLDR} #"
+echo '####################'
+
+echo -e "\n${BOLD}${YELLOW}Adding LimOS repository${RESET}"
+
+#Backup pacman.conf file
+sudo cp /etc/pacman.conf /etc/pacman.conf.bak 2> error.txt || err "Adding LimOS repository"
+
+echo -e $limos_repo_section | sudo tee -a /etc/pacman.conf > /dev/null 2> error.txt || err "Adding LimOS repository"
+
+echo -e "${ERASE}${BOLD}${GREEN}Adding LimOS repository${RESET}"
+
+echo -e "\n${BOLD}${YELLOW}Installing essential packages${RESET}"
+
+sudo pacman -S --noconfirm --needed - < pkglist.txt 1> /dev/null 2> error.txt || err "Installing essential packages"
+
+echo -e "${ERASE}${BOLD}${GREEN}Installing essential packages${RESET}"
+
+echo -e "${BOLD}${YELLOW}Configuring fonts${RESET}"
+
+if ! cp -r /etc/limos/Feather $HOME/.local/share/fonts/ttf/ 2> error.txt ||
+   ! mkdir -p $HOME/.local/share/fonts/{ttf,otf} 2> error.txt ||
+   ! wget 'https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/Meslo.zip' 1> /dev/null 2> error.txt ||
+   ! unzip Meslo.zip -d $HOME/.local/share/fonts/ttf/Meslo/ 1> /dev/null 2> error.txt ||
+   ! wget 'https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/Mononoki.zip' 1> /dev/null 2> error.txt ||
+   ! unzip Mononoki.zip -d $HOME/.local/share/fonts/ttf/Mononoki/ 1> /dev/null 2> error.txt ||
+   ! wget 'https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/RobotoMono.zip' 1> /dev/null 2> error.txt ||
+   ! unzip RobotoMono.zip -d $HOME/.local/share/fonts/ttf/RobotoMono/ 1> /dev/null 2> error.txt ||
+   ! chown $USER:$USER $HOME/.local/share/fonts/* 2> error.txt ||
+   ! rm Meslo.zip Mononoki.zip RobotoMono.zip 2> error.txt
+then
+    err "Configuring fonts"
+fi
+
+echo -e "${ERASE}${BOLD}${GREEN}Configuring fonts${RESET}"
+
+echo -e "${BOLD}${YELLOW}Changing shell to zsh${RESET}"
+
+sudo chsh $USER -s "/bin/zsh" 1> /dev/null 2> error.txt || err "Changing shell to zsh"
+
+echo -e "${ERASE}${BOLD}${GREEN}Changing shell to zsh${RESET}"
+
+echo -e "${BOLD}${YELLOW}Installing zsh plugins${RESET}"
+
+if ! git clone 'https://github.com/zsh-users/zsh-autosuggestions' ~/.zsh/zsh-autosuggestions 1> /dev/null 2> error.txt ||
+   ! git clone 'https://github.com/zsh-users/zsh-syntax-highlighting.git' ~/.zsh/zsh-syntax-highlighting 1> /dev/null 2> error.txt ||
+then
+    err "Installing zsh plugins"
+fi 
+
+echo -e "${ERASE}${BOLD}${GREEN}Installing zsh plugins${RESET}"
+
+echo -e "${BOLD}${YELLOW}Configuring sddm${RESET}"
+
+if ! git clone 'https://github.com/MarianArlt/sddm-chili.git' > /dev/null 2> error.txt ||
+   ! sudo mv ./sddm-chili /usr/share/sddm/themes/chili 2> error.txt ||
+   ! sudo cp /etc/limos/sddm/background.png /usr/share/sddm/themes/chili/assets/
+then
+    err "Configuring sddm"
+fi
+
+if [ -f "/usr/lib/sddm/sddm.conf.d/default.conf" ]; then
+    sudo cp /usr/lib/sddm/sddm.conf.d/default.conf /usr/lib/sddm/sddm.conf.d/default.conf.backup && \
+    sudo sed -i 's/^Current=*.*/Current=chili/g' /usr/lib/sddm/sddm.conf.d/default.conf && \
+    sudo mv /usr/lib/sddm/sddm.conf.d/default.conf /usr/lib/sddm/sddm.conf.d/sddm.conf
+fi
+
+sudo systemctl enable sddm.service > /dev/null 2> error.txt || err "Configuring sddm"
+
+echo -e "${ERASE}${BOLD}${GREEN}Configuring sddm${RESET}"
+
+echo -e "${BOLD}${YELLOW}Copying LimOS config files${RESET}"
+
+[ -f $HOME/.zshrc ] && mv $HOME/.zshrc $HOME/.zshrc.backup
+cp /etc/limos/zsh/zshrc $HOME/.zshrc
+
+[ ! -d $HOME/.config ] && mkdir $HOME/.config
+[ -d $HOME/.config ] && mkdir $HOME/.config.backup && cp -rf $HOME/.config $HOME/.config.backup
+
+cp /etc/limos/* $HOME/.config/
+
+echo -e "${ERASE}${BOLD}${GREEN}Copying LimOS config files${RESET}"
+
+while true; do
+    echo -n -e "${BOLD}LimOS is installed do you want to reboot? (Yy Nn): ${BOLDR}"
+    read choice
+
+    case $choice in
+        [Yy]* ) reboot;;
+        [Nn]* ) break;;
+        * ) echo "Please answer yes or no."
+    esac
+done
+
+
+
+
+
