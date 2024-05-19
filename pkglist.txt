@@ -16,7 +16,7 @@ pulseaudio
 pavucontrol
 flameshot
 neovim
-ttf-limos-feather
+limos-ttf-feather
 qt5-quickcontrols
 qt5-graphicaleffects
 vlc

@@ -111,7 +111,11 @@ echo -e "${ERASE}${BOLD}${GREEN}Installing zsh plugins${RESET}"
 
 echo -e "${BOLD}${YELLOW}Configuring themes and scripts${RESET}"
 
-git clone 'https://gitlab.com/limakos/limos-wallpapers.git' /usr/share/backgrounds/ > /dev/null 2> error.txt || err "Configuring themes and scripts"
+git clone 'https://gitlab.com/limakos/limos-wallpapers.git' > /dev/null 2> error.txt || err "Configuring themes and scripts"
+
+[ ! -d /usr/share/backgrounds ] && sudo mkdir /usr/share/backgrounds 2> error.txt || err "Configuring themes and scripts"
+
+sudo mv limos-wallpapers /usr/share/backgrounds/ 2> error.txt || err "Configuring themes and scripts"
 
 [ ! -d $HOME/.local/bin ] && mkdir $HOME/.local/bin
 
@@ -130,7 +134,7 @@ echo -e "${ERASE}${BOLD}${GREEN}Configuring themes and scripts${RESET}"
 echo -e "${BOLD}${YELLOW}Configuring sddm${RESET}"
 
 if ! git clone 'https://github.com/MarianArlt/sddm-chili.git' > /dev/null 2> error.txt ||
-   ! sudo mv ./sddm-chili /usr/share/sddm/themes/chili 2> error.txt ||
+   ! sudo mv ./sddm-chili /usr/share/sddm/themes/chili 2> error.txt
 then
     err "Configuring sddm"
 fi
