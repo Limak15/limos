@@ -1,0 +1,12 @@
+0 0 * * * env DISPLAY=:0 $HOME/.local/bin/limos-theme 0 
+0 2 * * * env DISPLAY=:0 $HOME/.local/bin/limos-theme 1 
+0 4 * * * env DISPLAY=:0 $HOME/.local/bin/limos-theme 2 
+0 6 * * * env DISPLAY=:0 $HOME/.local/bin/limos-theme 3 
+0 8 * * * env DISPLAY=:0 $HOME/.local/bin/limos-theme 4 
+0 10 * * * env DISPLAY=:0 $HOME/.local/bin/limos-theme 5 
+0 12 * * * env DISPLAY=:0 $HOME/.local/bin/limos-theme 6 
+0 14 * * * env DISPLAY=:0 $HOME/.local/bin/limos-theme 7 
+0 16 * * * env DISPLAY=:0 $HOME/.local/bin/limos-theme 8 
+0 18 * * * env DISPLAY=:0 $HOME/.local/bin/limos-theme 9 
+0 20 * * * env DISPLAY=:0 $HOME/.local/bin/limos-theme 10 
+0 22 * * * env DISPLAY=:0 $HOME/.local/bin/limos-theme 11

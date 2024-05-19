@@ -13,8 +13,7 @@ YELLOW="\033[33m"
 
 verbose=false
 version=1.0.0
-limos_repo_section="[limos-main-repo]\nSigLevel = Optional DatabaseOptional\nServer = https://gitlab.com/limakos/"'$repo'"/-/blob/master/"'$arch'
-dynamic_theme=false
+limos_repo_section="[limos-main-repo]\nSigLevel = Optional DatabaseOptional\nServer = https://gitlab.com/limakos/limos-main-repo/-/raw/master/"'$arch'
 
 for arg in "$@"
 do
@@ -47,24 +46,6 @@ while true; do
     esac
 done
 
-echo -e "\n\n#######${BOLD}${YELLOW} INFO ${RESET}##################################################################"
-echo "# Dynamic theme is something i implemented in my desktop. It's using cron job #"
-echo "# to change wallpaper and theme of desktop every 2 hours. I took colors       #" 
-echo "# from each wallpaper to match it and put in seperate files then i made a     #" 
-echo "# script that will take this colors and apply it in configuration files.      #"
-echo "###############################################################################"
-
-while true; do
-    echo -n -e "${BOLD}Do you want dynamic theme to be turned on? (Yy Nn): ${BOLDR}"
-    read choice
-
-    case $choice in
-        [Yy]* ) dynamic_theme=true; break;;
-        [Nn]* ) break;;
-        * ) echo "Please answer yes or no."
-    esac
-done
-
 if [[ ! $(sudo echo 0) ]]; then exit; fi
 
 err () {
@@ -84,6 +65,8 @@ sudo cp /etc/pacman.conf /etc/pacman.conf.bak 2> error.txt || err "Adding LimOS 
 
 echo -e $limos_repo_section | sudo tee -a /etc/pacman.conf > /dev/null 2> error.txt || err "Adding LimOS repository"
 
+sudo pacman -Syy > /dev/null 2> error.txt || err "Adding LimOS repository"
+
 echo -e "${ERASE}${BOLD}${GREEN}Adding LimOS repository${RESET}"
 
 echo -e "\n${BOLD}${YELLOW}Installing essential packages${RESET}"
@@ -94,8 +77,8 @@ echo -e "${ERASE}${BOLD}${GREEN}Installing essential packages${RESET}"
 
 echo -e "${BOLD}${YELLOW}Configuring fonts${RESET}"
 
-if ! cp -r /etc/limos/Feather $HOME/.local/share/fonts/ttf/ 2> error.txt ||
-   ! mkdir -p $HOME/.local/share/fonts/{ttf,otf} 2> error.txt ||
+if ! mkdir -p $HOME/.local/share/fonts/{ttf,otf} 2> error.txt ||
+   ! cp -r /etc/limos/Feather $HOME/.local/share/fonts/ttf/ 2> error.txt ||
    ! wget 'https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/Meslo.zip' 1> /dev/null 2> error.txt ||
    ! unzip Meslo.zip -d $HOME/.local/share/fonts/ttf/Meslo/ 1> /dev/null 2> error.txt ||
    ! wget 'https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/Mononoki.zip' 1> /dev/null 2> error.txt ||
@@ -119,18 +102,35 @@ echo -e "${ERASE}${BOLD}${GREEN}Changing shell to zsh${RESET}"
 echo -e "${BOLD}${YELLOW}Installing zsh plugins${RESET}"
 
 if ! git clone 'https://github.com/zsh-users/zsh-autosuggestions' ~/.zsh/zsh-autosuggestions 1> /dev/null 2> error.txt ||
-   ! git clone 'https://github.com/zsh-users/zsh-syntax-highlighting.git' ~/.zsh/zsh-syntax-highlighting 1> /dev/null 2> error.txt ||
+   ! git clone 'https://github.com/zsh-users/zsh-syntax-highlighting.git' ~/.zsh/zsh-syntax-highlighting 1> /dev/null 2> error.txt
 then
     err "Installing zsh plugins"
 fi 
 
 echo -e "${ERASE}${BOLD}${GREEN}Installing zsh plugins${RESET}"
 
+echo -e "${BOLD}${YELLOW}Configuring themes and scripts${RESET}"
+
+git clone 'https://gitlab.com/limakos/limos-wallpapers.git' /usr/share/backgrounds/ > /dev/null 2> error.txt || err "Configuring themes and scripts"
+
+[ ! -d $HOME/.local/bin ] && mkdir $HOME/.local/bin
+
+cp /etc/limos/scripts/* $HOME/.local/bin
+
+[ ! -f $HOME/.xsession ] && touch $HOME/.xsession
+
+echo "~/.local/bin/limos-theme" >> $HOME/.xsession
+echo "xsetroot -cursor_name left_ptr" >> $HOME/.xsession
+
+sudo systemctl enable --now cronie.service > /dev/null 2> error.txt || err "Configuring themes and scripts"
+crontab crontab.txt > /dev/null 2> error.txt || err "Configuring themes and scripts"
+
+echo -e "${ERASE}${BOLD}${GREEN}Configuring themes and scripts${RESET}"
+
 echo -e "${BOLD}${YELLOW}Configuring sddm${RESET}"
 
 if ! git clone 'https://github.com/MarianArlt/sddm-chili.git' > /dev/null 2> error.txt ||
    ! sudo mv ./sddm-chili /usr/share/sddm/themes/chili 2> error.txt ||
-   ! sudo cp /etc/limos/sddm/background.png /usr/share/sddm/themes/chili/assets/
 then
     err "Configuring sddm"
 fi
@@ -153,9 +153,20 @@ cp /etc/limos/zsh/zshrc $HOME/.zshrc
 [ ! -d $HOME/.config ] && mkdir $HOME/.config
 [ -d $HOME/.config ] && mkdir $HOME/.config.backup && cp -rf $HOME/.config $HOME/.config.backup
 
-cp /etc/limos/* $HOME/.config/
+cp -r /etc/limos/polybar $HOME/.config/
+cp -r /etc/limos/xmonad $HOME/.config/
+cp -r /etc/limos/rofi $HOME/.config/
+cp -r /etc/limos/kitty $HOME/.config/
 
 echo -e "${ERASE}${BOLD}${GREEN}Copying LimOS config files${RESET}"
+
+echo -e "${BOLD}${YELLOW}Finishing${RESET}"
+
+network_interface=$(ip -o link show | awk '$9 == "UP" {print $2}' | sed 's/://')
+
+[ -f "$HOME/.config/polybar/config.ini" ] && sed -i 's/interface = .*/interface = '"$network_interface"'/' $HOME/.config/polybar/config.ini || err "Finishing" 
+
+echo -e "${ERASE}${BOLD}${GREEN}Finishing${RESET}"
 
 while true; do
     echo -n -e "${BOLD}LimOS is installed do you want to reboot? (Yy Nn): ${BOLDR}"
@@ -167,8 +178,3 @@ while true; do
         * ) echo "Please answer yes or no."
     esac
 done
-
-
-
-
-

@@ -35,8 +35,13 @@ sddm
 kvantum
 lsd
 zsh
+limos-zsh
 starship
 dunst
 firefox
 udiskie
 ffmpegthumbnailer
+xorg
+nm-connection-editor
+cronie
+feh
