@@ -12,6 +12,7 @@ YELLOW="\033[33m"
 
 version=1.0.0
 limos_repo_section="[limos-main-repo]\nSigLevel = Optional DatabaseOptional\nServer = https://gitlab.com/limakos/limos-main-repo/-/raw/master/"'$arch'
+dynamic_theme=false
 
 for arg in "$@"
 do
@@ -34,7 +35,6 @@ info " ${BOLD}LimOS${BOLDR} is a post installation script that will install\n\
  and utilities that are needed to create fully functional desktop environment.\n\
  This script for now should only be used in Arch Linux."
 
-exit
 while true; do
     echo -n -e "${BOLD}Do you want to continue? (Yy Nn): ${BOLDR}"
     read choice
@@ -46,13 +46,21 @@ while true; do
     esac
 done
 
-if [[ ! $(sudo echo 0) ]]; then exit; fi
+info " ${BOLD}About dynamic theme: ${RESET} it's a script\n\
+ that will change desktop theme and wallpaper every two hours.\n\
+ You can see all themes here: https://gitlab.com/TODO\n\
+ If you disable dynamic theme by default theme number 6 will be used"
 
-err () {
-    echo -e "${ERASE}${RED}$1: "
-    echo -e "${RESET}$(cat error.txt)"
-    exit
-}
+while true; do
+    echo -n -e "${BOLD}Do you want enable dynamic theme? (Yy Nn): ${BOLDR}"
+    read choice
+
+    case $choice in
+        [Yy]* ) dynamic_theme=true;break;;
+        [Nn]* ) break;;
+        * ) echo "Please answer yes or no."
+    esac
+done
 
 info " ${BOLD}Installing LimOS${BOLDR}"
 
@@ -105,12 +113,14 @@ cp /etc/limos/scripts/* $HOME/.local/bin
 
 [ ! -f $HOME/.xsession ] && touch $HOME/.xsession
 
-echo "~/.local/bin/limos-theme" >> $HOME/.xsession
+$dynamic_them && echo "~/.local/bin/limos-theme" >> $HOME/.xsession
 echo "xsetroot -cursor_name left_ptr" >> $HOME/.xsession
 
-info "Adding cronjob for themes"
-sudo systemctl enable --now cronie.service
-crontab crontab.txt
+if $dynamic_theme; then
+    info "Adding cronjob for themes"
+    sudo systemctl enable --now cronie.service
+    crontab crontab.txt
+fi
 
 info "${BOLD}Configuring sddm${RESET}"
 
