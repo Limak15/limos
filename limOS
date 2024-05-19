@@ -4,14 +4,12 @@
 RESET="\033[0m" # Reset all foramting styles and colors
 BOLD="\033[1m"
 BOLDR="\033[22m" #Reset bold only styles
-ERASE="\033[1A\033[2K"
 
 # Colors
 RED="\033[31m"
 GREEN="\033[32m"
 YELLOW="\033[33m"
 
-verbose=false
 version=1.0.0
 limos_repo_section="[limos-main-repo]\nSigLevel = Optional DatabaseOptional\nServer = https://gitlab.com/limakos/limos-main-repo/-/raw/master/"'$arch'
 
@@ -22,19 +20,21 @@ do
             echo "LimOS install script version: $version"
             exit
             ;;
-        --verbose)
-            verbose=true
-            ;;
     esac
 done
 
-echo -e "#######${BOLD}${YELLOW} INFO ${RESET}###########################################################"
-echo -e "# ${BOLD}LimOS${BOLDR} is not another linux distribution. It's just an installation  #"
-echo "# script for Arch Linux that will install xmonad - tilling window     #"
-echo "# manager that i'm using and my configuration files. In the future i  #"
-echo "# will try to add support for more window managers.                   #"
-echo "#######################################################################"
+info() {
+    echo -e "#######${BOLD}${YELLOW} INFO ${RESET}################################################################"
+    echo -e "$1"
+    echo -e "#############################################################################\n"
+}
 
+info " ${BOLD}LimOS${BOLDR} is a post installation script that will install\n\
+ and configure window manager along with all applications\n\
+ and utilities that are needed to create fully functional desktop environment.\n\
+ This script for now should only be used in Arch Linux."
+
+exit
 while true; do
     echo -n -e "${BOLD}Do you want to continue? (Yy Nn): ${BOLDR}"
     read choice
@@ -54,68 +54,50 @@ err () {
     exit
 }
 
-echo -e "\n\n###${BOLD}${YELLOW} INFO ${RESET}###########"
-echo -e "# ${BOLD}Installing LimOS${BOLDR} #"
-echo '####################'
+info " ${BOLD}Installing LimOS${BOLDR}"
 
-echo -e "\n${BOLD}${YELLOW}Adding LimOS repository${RESET}"
+info "${BOLD}Adding LimOS repository${RESET}"
 
 #Backup pacman.conf file
-sudo cp /etc/pacman.conf /etc/pacman.conf.bak 2> error.txt || err "Adding LimOS repository"
+sudo cp /etc/pacman.conf /etc/pacman.conf.bak 
 
-echo -e $limos_repo_section | sudo tee -a /etc/pacman.conf > /dev/null 2> error.txt || err "Adding LimOS repository"
+echo -e $limos_repo_section | sudo tee -a /etc/pacman.conf
 
-sudo pacman -Syy > /dev/null 2> error.txt || err "Adding LimOS repository"
+sudo pacman -Syy
 
-echo -e "${ERASE}${BOLD}${GREEN}Adding LimOS repository${RESET}"
+info "${BOLD}Installing essential packages${RESET}"
 
-echo -e "\n${BOLD}${YELLOW}Installing essential packages${RESET}"
+sudo pacman -S --noconfirm --needed - < pkglist.txt
 
-sudo pacman -S --noconfirm --needed - < pkglist.txt 1> /dev/null 2> error.txt || err "Installing essential packages"
+info "${BOLD}Configuring fonts${RESET}"
 
-echo -e "${ERASE}${BOLD}${GREEN}Installing essential packages${RESET}"
+mkdir -p $HOME/.local/share/fonts/{ttf,otf}
+cp -r /etc/limos/Feather $HOME/.local/share/fonts/ttf/
+wget 'https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/Meslo.zip'
+unzip Meslo.zip -d $HOME/.local/share/fonts/ttf/Meslo/
+wget 'https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/Mononoki.zip'
+unzip Mononoki.zip -d $HOME/.local/share/fonts/ttf/Mononoki/
+wget 'https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/RobotoMono.zip'
+unzip RobotoMono.zip -d $HOME/.local/share/fonts/ttf/RobotoMono/
+chown $USER:$USER $HOME/.local/share/fonts/*
+rm Meslo.zip Mononoki.zip RobotoMono.zip
 
-echo -e "${BOLD}${YELLOW}Configuring fonts${RESET}"
-
-if ! mkdir -p $HOME/.local/share/fonts/{ttf,otf} 2> error.txt ||
-   ! cp -r /etc/limos/Feather $HOME/.local/share/fonts/ttf/ 2> error.txt ||
-   ! wget 'https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/Meslo.zip' 1> /dev/null 2> error.txt ||
-   ! unzip Meslo.zip -d $HOME/.local/share/fonts/ttf/Meslo/ 1> /dev/null 2> error.txt ||
-   ! wget 'https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/Mononoki.zip' 1> /dev/null 2> error.txt ||
-   ! unzip Mononoki.zip -d $HOME/.local/share/fonts/ttf/Mononoki/ 1> /dev/null 2> error.txt ||
-   ! wget 'https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/RobotoMono.zip' 1> /dev/null 2> error.txt ||
-   ! unzip RobotoMono.zip -d $HOME/.local/share/fonts/ttf/RobotoMono/ 1> /dev/null 2> error.txt ||
-   ! chown $USER:$USER $HOME/.local/share/fonts/* 2> error.txt ||
-   ! rm Meslo.zip Mononoki.zip RobotoMono.zip 2> error.txt
-then
-    err "Configuring fonts"
-fi
-
-echo -e "${ERASE}${BOLD}${GREEN}Configuring fonts${RESET}"
-
-echo -e "${BOLD}${YELLOW}Changing shell to zsh${RESET}"
+info "${BOLD}Changing shell to zsh${RESET}"
 
 sudo chsh $USER -s "/bin/zsh" 1> /dev/null 2> error.txt || err "Changing shell to zsh"
 
-echo -e "${ERASE}${BOLD}${GREEN}Changing shell to zsh${RESET}"
+info "${BOLD}Installing zsh plugins${RESET}"
 
-echo -e "${BOLD}${YELLOW}Installing zsh plugins${RESET}"
+git clone 'https://github.com/zsh-users/zsh-autosuggestions' ~/.zsh/zsh-autosuggestions
+git clone 'https://github.com/zsh-users/zsh-syntax-highlighting.git' ~/.zsh/zsh-syntax-highlighting
 
-if ! git clone 'https://github.com/zsh-users/zsh-autosuggestions' ~/.zsh/zsh-autosuggestions 1> /dev/null 2> error.txt ||
-   ! git clone 'https://github.com/zsh-users/zsh-syntax-highlighting.git' ~/.zsh/zsh-syntax-highlighting 1> /dev/null 2> error.txt
-then
-    err "Installing zsh plugins"
-fi 
+info "${BOLD}Configuring themes and scripts${RESET}"
 
-echo -e "${ERASE}${BOLD}${GREEN}Installing zsh plugins${RESET}"
+git clone 'https://gitlab.com/limakos/limos-wallpapers.git'
 
-echo -e "${BOLD}${YELLOW}Configuring themes and scripts${RESET}"
+[ ! -d /usr/share/backgrounds ] && sudo mkdir /usr/share/backgrounds
 
-git clone 'https://gitlab.com/limakos/limos-wallpapers.git' > /dev/null 2> error.txt || err "Configuring themes and scripts"
-
-[ ! -d /usr/share/backgrounds ] && sudo mkdir /usr/share/backgrounds 2> error.txt || err "Configuring themes and scripts"
-
-sudo mv limos-wallpapers /usr/share/backgrounds/ 2> error.txt || err "Configuring themes and scripts"
+sudo mv limos-wallpapers /usr/share/backgrounds/
 
 [ ! -d $HOME/.local/bin ] && mkdir $HOME/.local/bin
 
@@ -126,18 +108,14 @@ cp /etc/limos/scripts/* $HOME/.local/bin
 echo "~/.local/bin/limos-theme" >> $HOME/.xsession
 echo "xsetroot -cursor_name left_ptr" >> $HOME/.xsession
 
-sudo systemctl enable --now cronie.service > /dev/null 2> error.txt || err "Configuring themes and scripts"
-crontab crontab.txt > /dev/null 2> error.txt || err "Configuring themes and scripts"
+info "Adding cronjob for themes"
+sudo systemctl enable --now cronie.service
+crontab crontab.txt
 
-echo -e "${ERASE}${BOLD}${GREEN}Configuring themes and scripts${RESET}"
+info "${BOLD}Configuring sddm${RESET}"
 
-echo -e "${BOLD}${YELLOW}Configuring sddm${RESET}"
-
-if ! git clone 'https://github.com/MarianArlt/sddm-chili.git' > /dev/null 2> error.txt ||
-   ! sudo mv ./sddm-chili /usr/share/sddm/themes/chili 2> error.txt
-then
-    err "Configuring sddm"
-fi
+git clone 'https://github.com/MarianArlt/sddm-chili.git'
+sudo mv ./sddm-chili /usr/share/sddm/themes/chili
 
 if [ -f "/usr/lib/sddm/sddm.conf.d/default.conf" ]; then
     sudo cp /usr/lib/sddm/sddm.conf.d/default.conf /usr/lib/sddm/sddm.conf.d/default.conf.backup && \
@@ -145,11 +123,9 @@ if [ -f "/usr/lib/sddm/sddm.conf.d/default.conf" ]; then
     sudo mv /usr/lib/sddm/sddm.conf.d/default.conf /usr/lib/sddm/sddm.conf.d/sddm.conf
 fi
 
-sudo systemctl enable sddm.service > /dev/null 2> error.txt || err "Configuring sddm"
+sudo systemctl enable sddm.service
 
-echo -e "${ERASE}${BOLD}${GREEN}Configuring sddm${RESET}"
-
-echo -e "${BOLD}${YELLOW}Copying LimOS config files${RESET}"
+info "${BOLD}Copying LimOS config files${RESET}"
 
 [ -f $HOME/.zshrc ] && mv $HOME/.zshrc $HOME/.zshrc.backup
 cp /etc/limos/zsh/zshrc $HOME/.zshrc
@@ -162,15 +138,12 @@ cp -r /etc/limos/xmonad $HOME/.config/
 cp -r /etc/limos/rofi $HOME/.config/
 cp -r /etc/limos/kitty $HOME/.config/
 
-echo -e "${ERASE}${BOLD}${GREEN}Copying LimOS config files${RESET}"
 
-echo -e "${BOLD}${YELLOW}Finishing${RESET}"
+info "${BOLD}Adding network interface to polybar config${RESET}"
 
 network_interface=$(ip -o link show | awk '$9 == "UP" {print $2}' | sed 's/://')
 
 [ -f "$HOME/.config/polybar/config.ini" ] && sed -i 's/interface = .*/interface = '"$network_interface"'/' $HOME/.config/polybar/config.ini || err "Finishing" 
-
-echo -e "${ERASE}${BOLD}${GREEN}Finishing${RESET}"
 
 while true; do
     echo -n -e "${BOLD}LimOS is installed do you want to reboot? (Yy Nn): ${BOLDR}"
