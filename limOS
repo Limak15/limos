@@ -147,6 +147,7 @@ cp -r /etc/limos/polybar $HOME/.config/
 cp -r /etc/limos/xmonad $HOME/.config/
 cp -r /etc/limos/rofi $HOME/.config/
 cp -r /etc/limos/kitty $HOME/.config/
+cp -r /etc/limos/dunst $HOME/.config/
 
 if ! $dynamic_theme; then
     info "${BOLD}Applying default theme${RESET}"
