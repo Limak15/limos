@@ -46,3 +46,4 @@ nm-connection-editor
 cronie
 feh
 limos-scripts
+limos-dunst
