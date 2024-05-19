@@ -179,7 +179,7 @@ if ! $dynamic_theme; then
     fi
 
     if [ -f "$dunst_path" ]; then
-        dunst_colors=/home/kamil/.config/dunst/colors
+        dunst_colors=$HOME/.config/dunst/colors
         bg=$(awk -F= '/background/ {print $2}' "$dunst_colors/colors6.txt")
         fg=$(awk -F= '/foreground/ {print $2}' "$dunst_colors/colors6.txt")
         fr=$(awk -F= '/frame/ {print $2}' "$dunst_colors/colors6.txt")
