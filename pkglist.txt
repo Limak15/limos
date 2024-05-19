@@ -45,3 +45,4 @@ xorg
 nm-connection-editor
 cronie
 feh
+limos-scripts
