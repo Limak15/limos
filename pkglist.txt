@@ -49,3 +49,4 @@ limos-scripts
 limos-dunst
 zoxide
 limos-picom
+fzf
