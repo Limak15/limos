@@ -47,3 +47,5 @@ cronie
 feh
 limos-scripts
 limos-dunst
+zoxide
+limos-picom
