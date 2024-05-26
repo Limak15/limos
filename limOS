@@ -10,19 +10,8 @@ RED="\033[31m"
 GREEN="\033[32m"
 YELLOW="\033[33m"
 
-version=1.0.0
 limos_repo_section="[limos-main-repo]\nSigLevel = Optional DatabaseOptional\nServer = https://gitlab.com/limakos/limos-main-repo/-/raw/master/"'$arch'
 dynamic_theme=false
-
-for arg in "$@"
-do
-    case $arg in
-        --version)
-            echo "LimOS install script version: $version"
-            exit
-            ;;
-    esac
-done
 
 info() {
     echo -e "#######${BOLD}${YELLOW} INFO ${RESET}################################################################"
@@ -75,7 +64,7 @@ sudo pacman -Syy
 
 info "${BOLD}Installing essential packages${RESET}"
 
-sudo pacman -S --noconfirm --needed - < pkglist.txt
+sudo pacman -Sy --noconfirm --needed - < pkglist.txt
 
 info "${BOLD}Configuring fonts${RESET}"
 
@@ -124,8 +113,20 @@ fi
 
 info "${BOLD}Configuring sddm${RESET}"
 
+dm=$(systemctl show display-manager.service --property=Id --value)
+
+[ "$dm" != "sddm.service" ] && sudo systemctl disable --now $dm
+
 git clone 'https://github.com/MarianArlt/sddm-chili.git'
 sudo mv ./sddm-chili /usr/share/sddm/themes/chili
+
+[ -f "/usr/share/sddm/themes/chili/assets/background.jpg" ] && sudo rm "/usr/share/sddm/themes/chili/assets/background.jpg"
+sudo cp /usr/share/backgrounds/limos-wallpaper/6.jpg /usr/share/sddm/themes/chili/assets/background.jpg
+ 
+if [ -f "/usr/share/sddm/themes/chili/theme.conf" ]; then
+    sudo cp /usr/share/sddm/themes/chili/theme.conf /usr/share/sddm/themes/chili/theme.conf.backup
+fi
+
 
 if [ -f "/usr/lib/sddm/sddm.conf.d/default.conf" ]; then
     sudo cp /usr/lib/sddm/sddm.conf.d/default.conf /usr/lib/sddm/sddm.conf.d/default.conf.backup && \
@@ -133,7 +134,7 @@ if [ -f "/usr/lib/sddm/sddm.conf.d/default.conf" ]; then
     sudo mv /usr/lib/sddm/sddm.conf.d/default.conf /usr/lib/sddm/sddm.conf.d/sddm.conf
 fi
 
-sudo systemctl enable sddm.service
+[ "$dm" != "sddm.service" ] && sudo systemctl enable sddm.service
 
 info "${BOLD}Copying LimOS config files${RESET}"
 
