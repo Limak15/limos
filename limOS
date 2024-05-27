@@ -121,7 +121,7 @@ git clone 'https://github.com/MarianArlt/sddm-chili.git'
 sudo mv ./sddm-chili /usr/share/sddm/themes/chili
 
 [ -f "/usr/share/sddm/themes/chili/assets/background.jpg" ] && sudo rm "/usr/share/sddm/themes/chili/assets/background.jpg"
-sudo cp /usr/share/backgrounds/limos-wallpaper/6.jpg /usr/share/sddm/themes/chili/assets/background.jpg
+sudo cp /usr/share/backgrounds/limos-wallpapers/6.jpg /usr/share/sddm/themes/chili/assets/background.jpg
 
 if [ -f "/usr/lib/sddm/sddm.conf.d/default.conf" ]; then
     sudo cp /usr/lib/sddm/sddm.conf.d/default.conf /usr/lib/sddm/sddm.conf.d/default.conf.backup && \
