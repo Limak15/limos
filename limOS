@@ -122,17 +122,18 @@ sudo mv ./sddm-chili /usr/share/sddm/themes/chili
 
 [ -f "/usr/share/sddm/themes/chili/assets/background.jpg" ] && sudo rm "/usr/share/sddm/themes/chili/assets/background.jpg"
 sudo cp /usr/share/backgrounds/limos-wallpaper/6.jpg /usr/share/sddm/themes/chili/assets/background.jpg
- 
-if [ -f "/usr/share/sddm/themes/chili/theme.conf" ]; then
-    sudo cp /usr/share/sddm/themes/chili/theme.conf /usr/share/sddm/themes/chili/theme.conf.backup
-fi
-
 
 if [ -f "/usr/lib/sddm/sddm.conf.d/default.conf" ]; then
     sudo cp /usr/lib/sddm/sddm.conf.d/default.conf /usr/lib/sddm/sddm.conf.d/default.conf.backup && \
-    sudo sed -i 's/^Current=*.*/Current=chili/g' /usr/lib/sddm/sddm.conf.d/default.conf && \
-    sudo mv /usr/lib/sddm/sddm.conf.d/default.conf /usr/lib/sddm/sddm.conf.d/sddm.conf
+    sudo sed -i 's/^Current=*.*/Current=chili/g' /usr/lib/sddm/sddm.conf.d/default.conf
 fi
+
+if [ -f "/etc/sddm.conf" ]; then
+    sudo cp /etc/sddm.conf /etc/sddm.conf.backup
+    sudo sed -i 's/^Current=*.*/Current=chili/g' /etc/sddm.conf
+fi
+
+[ ! -f "/etc/sddm.conf" ] && sudo cp /usr/lib/sddm/sddm.conf.d/default.conf /etc/sddm.conf
 
 [ "$dm" != "sddm.service" ] && sudo systemctl enable sddm.service
 

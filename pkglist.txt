@@ -12,7 +12,6 @@ limos-kitty
 rofi
 limos-rofi
 picom
-pulseaudio
 pavucontrol
 flameshot
 neovim
