@@ -22,7 +22,8 @@ info() {
 info " ${BOLD}LimOS${BOLDR} is a post installation script that will install\n\
  and configure window manager along with all applications\n\
  and utilities that are needed to create fully functional desktop environment.\n\
- This script for now should only be used in Arch Linux."
+ This script should only be used on bare Arch Linux i didn't test it on Arch with \n\
+ KDE or GNOME installed"
 
 while true; do
     echo -n -e "${BOLD}Do you want to continue? (Yy Nn): ${BOLDR}"
