@@ -1,6 +1,6 @@
 ### About LimOS
 ---
-**LimOS** is a post installation script that will install and configure window manager along with all applications and utilities that are needed to create fully functional desktop environment. This script should only be used on bare Arch Linux i didn't test it on Arch with KDE or GNOME installed.
+**LimOS** is a post installation script that will install and configure window manager along with all applications and utilities that are needed to create fully functional desktop environment. This script should only be used on bare Arch Linux i didn't test it on Arch with KDE, GNOME or any other desktop environment installed.
 
 ![desktop!](https://gitlab.com/Limak01/dotfiles/-/raw/master/.screenshots/theme6.png)
 
