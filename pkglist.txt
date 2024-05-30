@@ -50,4 +50,3 @@ zoxide
 limos-picom
 fzf
 base-devel
-makepkg
