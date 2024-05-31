@@ -40,7 +40,7 @@ It's a script that will change desktop theme and wallpaper every two hours. When
 |---|---|
 |<kbd>xF86XK_AudioRaiseVolume</kbd>|Raise volume|
 |<kbd>xF86XK_AudioLowerVolume</kbd>|Lower volume|
-|<kbd>xF86XK_AudioLowerVolume</kbd>|Audio mute|
+|<kbd>xF86XK_AudioMute</kbd>|Audio mute|
 |<kbd>xF86XK_AudioNext</kbd>|Play next song|
 |<kbd>xF86XK_AudioPrev</kbd>|Play previous song|
 |<kbd>xF86XK_AudioPlay</kbd>|Toggle play or pause|
