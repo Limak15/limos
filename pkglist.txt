@@ -50,3 +50,5 @@ zoxide
 limos-picom
 fzf
 base-devel
+plymouth
+limos-plymouth

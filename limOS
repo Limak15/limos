@@ -152,6 +152,7 @@ cp -r /etc/limos/rofi $HOME/.config/
 cp -r /etc/limos/kitty $HOME/.config/
 cp -r /etc/limos/dunst $HOME/.config/
 cp -r /etc/limos/picom $HOME/.config/
+sudo cp -r /etc/limos/plymouth /usr/share/plymouth/themes/limos 
 
 if ! $dynamic_theme; then
     info "${BOLD}Applying default theme${RESET}"
@@ -197,6 +198,17 @@ info "${BOLD}Adding network interface to polybar config${RESET}"
 network_interface=$(ip -o link show | awk '$9 == "UP" {print $2}' | sed 's/://')
 
 [ -f "$HOME/.config/polybar/config.ini" ] && sed -i 's/interface = .*/interface = '"$network_interface"'/' $HOME/.config/polybar/config.ini
+
+info "${BOLD}Configuring plymouth${RESET}"
+
+sudo sed -i 's/GRUB_CMDLINE_LINUX_DEFAULT="[^"]*"/GRUB_CMDLINE_LINUX_DEFAULT="quiet splash"/' /etc/default/grub
+
+sudo grub-mkconfig -o /boot/grub/grub.cfg
+
+sudo sed -i 's/\(HOOKS=(base udev autodetect microcode modconf kms keyboard keymap consolefont block filesystems fsck\))/\1 plymouth)/' /etc/mkinitcpio.conf
+
+sudo plymouth-set-default-theme -R limos
+
 
 while true; do
     echo -n -e "${BOLD}LimOS is installed do you want to reboot? (Yy Nn): ${BOLDR}"
