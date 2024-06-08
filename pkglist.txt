@@ -30,7 +30,7 @@ unzip
 mousepad
 lxappearance
 qt6ct
-sddm
+ly
 kvantum
 lsd
 zsh

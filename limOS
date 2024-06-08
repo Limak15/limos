@@ -115,27 +115,9 @@ info "${BOLD}Configuring sddm${RESET}"
 
 dm=$(systemctl show display-manager.service --property=Id --value)
 
-[ "$dm" != "sddm.service" ] && sudo systemctl disable --now $dm
+sudo systemctl disable --now $dm
 
-git clone 'https://github.com/MarianArlt/sddm-chili.git'
-sudo mv ./sddm-chili /usr/share/sddm/themes/chili
-
-[ -f "/usr/share/sddm/themes/chili/assets/background.jpg" ] && sudo rm "/usr/share/sddm/themes/chili/assets/background.jpg"
-sudo cp /usr/share/backgrounds/limos-wallpapers/6.jpg /usr/share/sddm/themes/chili/assets/background.jpg
-
-if [ -f "/usr/lib/sddm/sddm.conf.d/default.conf" ]; then
-    sudo cp /usr/lib/sddm/sddm.conf.d/default.conf /usr/lib/sddm/sddm.conf.d/default.conf.backup && \
-    sudo sed -i 's/^Current=*.*/Current=chili/g' /usr/lib/sddm/sddm.conf.d/default.conf
-fi
-
-if [ -f "/etc/sddm.conf" ]; then
-    sudo cp /etc/sddm.conf /etc/sddm.conf.backup
-    sudo sed -i 's/^Current=*.*/Current=chili/g' /etc/sddm.conf
-fi
-
-[ ! -f "/etc/sddm.conf" ] && sudo cp /usr/lib/sddm/sddm.conf.d/default.conf /etc/sddm.conf
-
-[ "$dm" != "sddm.service" ] && sudo systemctl enable sddm.service
+sudo systemctl enable ly.service
 
 info "${BOLD}Copying LimOS config files${RESET}"
 
