@@ -68,14 +68,14 @@ sudo pacman-key --lsign-key 3056513887B78AEB
 sudo pacman -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst'
 sudo pacman -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst'
 
-echo -e $limos_repo_section | sudo tee -a /etc/pacman.conf
+echo -e $chaotic_aur | sudo tee -a /etc/pacman.conf
 
 
 info "${BOLD}Installing essential packages${RESET}"
 
 sudo pacman -Sy --noconfirm --needed - < pkglist.txt
 
-browsers=($(./checkbox --title "Choose browsers" "firefox|Mozilla Firefox|OFF" "brave-bin|Brave Browser|OFF" "librewolf-bin|LibreWolf|OFF" "chromium|Chromium|OFF" "vivaldi|Vivaldi|OFF"))
+browsers=($(./checkbox --title "Choose browsers" "firefox|Mozilla Firefox|OFF" "chaotic-aur/brave|Brave Browser|OFF" "chaotic-aur/librewolf|LibreWolf|OFF" "chromium|Chromium|OFF" "vivaldi|Vivaldi|OFF"))
 
 info "${BOLD}Installing ${#browsers[@]} browsers${RESET}"
 
@@ -85,7 +85,7 @@ multimedia=($(./checkbox --title "Choose multimedia programs" "chaotic-aur/deadb
 
 info "${BOLD}Installing ${#multimedia[@]} programs${RESET}"
 
-[ ${#multimedia[@]} -gt 0 ] && sudo pacman -S -needed --noconfirm "${multimedia[@]}"
+[ ${#multimedia[@]} -gt 0 ] && sudo pacman -S --needed --noconfirm "${multimedia[@]}"
 
 info "${BOLD}Configuring fonts${RESET}"
 
