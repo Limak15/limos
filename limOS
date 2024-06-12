@@ -11,6 +11,7 @@ GREEN="\033[32m"
 YELLOW="\033[33m"
 
 limos_repo_section="[limos-main-repo]\nSigLevel = Optional DatabaseOptional\nServer = https://gitlab.com/limakos/limos-main-repo/-/raw/master/"'$arch'
+chaotic_aur="[chaotic-aur]\nInclude = /etc/pacman.d/chaotic-mirrorlist"
 dynamic_theme=false
 
 info() {
@@ -60,30 +61,31 @@ sudo cp /etc/pacman.conf /etc/pacman.conf.bak
 
 echo -e $limos_repo_section | sudo tee -a /etc/pacman.conf
 
-sudo pacman -Syy
+info "${BOLD}Adding Chaotic AUR repository${RESET}"
+
+sudo pacman-key --recv-key 3056513887B78AEB --keyserver keyserver.ubuntu.com
+sudo pacman-key --lsign-key 3056513887B78AEB
+sudo pacman -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst'
+sudo pacman -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst'
+
+echo -e $limos_repo_section | sudo tee -a /etc/pacman.conf
+
 
 info "${BOLD}Installing essential packages${RESET}"
 
 sudo pacman -Sy --noconfirm --needed - < pkglist.txt
 
-info "${BOLD}Installing yay${RESET}"
-
-git clone https://aur.archlinux.org/yay.git
-cd yay
-makepkg -si
-cd ..
-
 browsers=($(./checkbox --title "Choose browsers" "firefox|Mozilla Firefox|OFF" "brave-bin|Brave Browser|OFF" "librewolf-bin|LibreWolf|OFF" "chromium|Chromium|OFF" "vivaldi|Vivaldi|OFF"))
 
 info "${BOLD}Installing ${#browsers[@]} browsers${RESET}"
 
-[ ${#browsers[@]} -gt 0 ] && yay -S --needed --noconfirm "${browsers[@]}"
+[ ${#browsers[@]} -gt 0 ] && sudo pacman -S --needed --noconfirm "${browsers[@]}"
 
-multimedia=($(./checkbox --title "Choose multimedia programs" "deadbeef|DeaDBeeF Music Player|OFF" "strawberry|Strawberry Music Player|OFF" "spotify|Spotify Music Player|OFF" "nomacs|Nomacs Image Viewer|OFF" "eog|Eye Of Gnome Image Viewer|OFF" "gthumb|gThumb Image Viewer|OFF" "vlc|VLC Multimedia Player|OFF" "mpv|MPV Multimedia Player|OFF" "clapper|Clapper Multimedia Player|OFF" "obs-studio|OBS Broadcast Software|OFF"))
+multimedia=($(./checkbox --title "Choose multimedia programs" "chaotic-aur/deadbeef|DeaDBeeF Music Player|OFF" "strawberry|Strawberry Music Player|OFF" "chaotic-aur/spotify|Spotify Music Player|OFF" "chaotic-aur/nomacs|Nomacs Image Viewer|OFF" "eog|Eye Of Gnome Image Viewer|OFF" "gthumb|gThumb Image Viewer|OFF" "vlc|VLC Multimedia Player|OFF" "mpv|MPV Multimedia Player|OFF" "chaotic-aur/clapper|Clapper Multimedia Player|OFF" "obs-studio|OBS Broadcast Software|OFF"))
 
 info "${BOLD}Installing ${#multimedia[@]} programs${RESET}"
 
-[ ${#multimedia[@]} -gt 0 ] && yay -S -needed --noconfirm "${multimedia[@]}"
+[ ${#multimedia[@]} -gt 0 ] && sudo pacman -S -needed --noconfirm "${multimedia[@]}"
 
 info "${BOLD}Configuring fonts${RESET}"
 
