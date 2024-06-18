@@ -30,14 +30,13 @@ unzip
 mousepad
 lxappearance
 qt6ct
-sddm
+ly
 kvantum
 lsd
 zsh
 limos-zsh
 starship
 dunst
-firefox
 udiskie
 ffmpegthumbnailer
 xorg

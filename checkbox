@@ -1,0 +1,140 @@
+#! /usr/bin/env bash
+
+title=""
+choices=()
+choices_on_off=()
+choices_len=0
+selected_choice=0
+
+isTitleArg=false
+for arg in "$@";
+do
+    if [ "$arg" == "--title" ]; then
+        isTitleArg=true
+        continue
+    fi
+
+    if $isTitleArg; then
+        title=$arg
+        isTitleArg=false
+        continue
+    fi
+    
+    IFS='|' read -r -a test <<< "$arg"
+    
+    if [ ${#test[@]} -lt 3 ] || [ "${test[2]}" != "ON" ] && [ "${test[2]}" != "OFF" ]; then
+        echo "Invalid argument: You should use --> 'option|description|{ON/OFF}' example: 'Cookie|Good Cookie|OFF'"
+        exit
+    fi
+    
+    if [ "${test[2]}" == "ON" ]; then
+        choices_on_off+=(true)    
+    else
+        choices_on_off+=(false)    
+    fi
+    
+
+    choices+=("$arg") 
+    ((choices_len=choices_len+1))
+done
+
+function clear_output() {
+    for ((i=0; i < choices_len+3; i++)); do 
+        printf "\x1b[2K\x1b[1A" >&2
+    done
+    printf "\r" >&2
+}
+
+function print_tui() {
+    if [ "$title" != "" ]; then
+        echo "$title" >&2
+    else 
+        echo "Checkbox" >&2
+    fi
+    
+    echo "------------------------------------" >&2
+
+    index=0 
+    for choice in "${choices[@]}";
+    do
+        IFS='|' read -r -a splitted <<< "$choice"
+
+        selected=" "
+        if ${choices_on_off[$index]}; then
+            selected="*"
+        fi
+    
+        formatted=''
+        if [ $index -eq $selected_choice ]; then
+            formatted='\x1b[41m'
+        fi
+        
+        printf "[%b%c\x1b[0m] %s\n" "$formatted" "$selected" "${splitted[1]}" >&2
+
+        ((index=index+1))
+    done
+
+    echo "------------------------------------" >&2
+}
+
+function read_key() {
+    read -n 1 -s input
+    
+    # If enter was hit
+    if [ ${#input} -eq 0 ]; then
+        for((i=0; i < choices_len; i++));
+        do
+            if ${choices_on_off[$i]}; then
+                if [ $i -ne 0 ]; then
+                    printf " "
+                fi
+
+                IFS='|' read -r -a splitted <<< "${choices[$i]}"
+                printf "${splitted[0]}" 
+            fi
+        done
+
+        printf "\n" >&2
+        exit
+    fi
+
+    case $input in
+        "s")
+            if ${choices_on_off[$selected_choice]}; then
+                choices_on_off[$selected_choice]=false
+            else
+                choices_on_off[$selected_choice]=true
+            fi
+        ;;
+        $'\x1b')
+            read -s -n 1 key
+            if [[ "$key" == "[" ]]; then
+                read -s -n 1 key
+
+                case $key in
+                    "A")
+                        if [ $((selected_choice - 1)) -ge 0 ]; then
+                            ((selected_choice=selected_choice-1))
+                        fi
+                    ;;
+                    "B")
+                        if [ $((selected_choice + 1)) -lt $choices_len ]; then
+                            ((selected_choice=selected_choice+1))
+                        fi
+                    ;;
+                esac
+            fi
+        ;;
+    esac
+}
+
+#Print tui
+while true;
+do
+    print_tui
+    read_key
+    clear_output    
+done
+
+
+
