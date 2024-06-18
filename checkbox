@@ -39,7 +39,7 @@ do
 done
 
 function clear_output() {
-    for ((i=0; i < choices_len+3; i++)); do 
+    for ((i=0; i < choices_len+4; i++)); do 
         printf "\x1b[2K\x1b[1A" >&2
     done
     printf "\r" >&2
@@ -73,8 +73,8 @@ function print_tui() {
 
         ((index=index+1))
     done
-
     echo "------------------------------------" >&2
+    echo "ARROWS UP DOWN | click s for select" >&2
 }
 
 function read_key() {
