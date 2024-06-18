@@ -75,7 +75,7 @@ info "${BOLD}Installing essential packages${RESET}"
 
 sudo pacman -Sy --noconfirm --needed - < pkglist.txt
 
-browsers=($(./checkbox --title "Choose browsers" "firefox|Mozilla Firefox|OFF" "chaotic-aur/brave|Brave Browser|OFF" "chaotic-aur/librewolf|LibreWolf|OFF" "chromium|Chromium|OFF" "vivaldi|Vivaldi|OFF" "microsoft-edge-stable|Microsoft Edge|OFF" "ungoogled-chromium|Ungoogled Chromium|OFF" "google-chrome-stable|Google Chrome|OFF"))
+browsers=($(./checkbox --title "Choose browsers" "firefox|Mozilla Firefox|OFF" "chaotic-aur/brave|Brave Browser|OFF" "chaotic-aur/librewolf|LibreWolf|OFF" "chromium|Chromium|OFF" "vivaldi|Vivaldi|OFF" "chaotic-aur/microsoft-edge-stable|Microsoft Edge|OFF" "chaotic-aur/ungoogled-chromium|Ungoogled Chromium|OFF" "chaotic-aur/google-chrome|Google Chrome|OFF"))
 
 info "${BOLD}Installing ${#browsers[@]} browsers${RESET}"
 
