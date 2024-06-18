@@ -51,3 +51,4 @@ fzf
 base-devel
 plymouth
 limos-plymouth
+pulseaudio
