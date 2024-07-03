@@ -12,7 +12,6 @@ limos-kitty
 rofi
 limos-rofi
 picom
-pavucontrol
 flameshot
 neovim
 limos-ttf-feather
@@ -51,4 +50,3 @@ fzf
 base-devel
 plymouth
 limos-plymouth
-pulseaudio
