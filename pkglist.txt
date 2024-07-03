@@ -50,3 +50,4 @@ fzf
 base-devel
 plymouth
 limos-plymouth
+alsa-utils
