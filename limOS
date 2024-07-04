@@ -157,6 +157,10 @@ cp -r /etc/limos/dunst $HOME/.config/
 cp -r /etc/limos/picom $HOME/.config/
 sudo cp -r /etc/limos/plymouth /usr/share/plymouth/themes/limos 
 
+if command -v pulseaudio &> /dev/null || command -v pipewire &> /dev/null; then
+    sed -i '/modules-right =  tray alsa network powerbtn/s/alsa/pulseaudio/' ~/.config/polybar/config.ini
+fi
+
 if ! $dynamic_theme; then
     info "${BOLD}Applying default theme${RESET}"
 
