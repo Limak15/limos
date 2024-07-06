@@ -99,7 +99,7 @@ while true; do
                 sudo pacman -S --needed --noconfirm "${audioserver[0]}" pavucontrol pamixer
             ;;
             "pipewire")
-                sudo pacman -S --needed --noconfirm "${audioserver[0]}"
+                sudo pacman -S --needed --noconfirm "${audioserver[0]}" pipewire-pulse pavucontrol pamixer
             ;;
         esac
         break 
