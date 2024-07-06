@@ -88,25 +88,27 @@ info "${BOLD}Installing ${#multimedia[@]} programs${RESET}"
 
 [ ${#multimedia[@]} -gt 0 ] && sudo pacman -S --needed --noconfirm "${multimedia[@]}"
 
-while true; do
-    audioserver=($(./checkbox --title "Audio server (No choice = alsa)" "pulseaudio|PulseAudio|OFF" "pipewire|PipeWire|OFF"))
+if ! command -v pulseaudio &> /dev/null && ! command -v pipewire &> /dev/null; then
+    while true; do
+        audioserver=($(./checkbox --title "Audio server (No choice = alsa)" "pulseaudio|PulseAudio|OFF" "pipewire|PipeWire|OFF"))
 
-    [ ${#audioserver[@]} -eq 0 ] && info "${BOLD}No choice! Alsa will be used.${RESET}" && exit
+        [ ${#audioserver[@]} -eq 0 ] && info "${BOLD}No choice! Alsa will be used.${RESET}" && break
 
-    if [ ${#audioserver[@]} -eq 1 ]; then
-        case "${audioserver[0]}" in
-            "pulseaudio")
-                sudo pacman -S --needed --noconfirm "${audioserver[0]}" pavucontrol pamixer
-            ;;
-            "pipewire")
-                sudo pacman -S --needed --noconfirm "${audioserver[0]}" pipewire-pulse pavucontrol pamixer
-            ;;
-        esac
-        break 
-    else
-        info "${BOLD}${RED}You have to choose only one audio server!${RESET}"
-    fi
-done
+        if [ ${#audioserver[@]} -eq 1 ]; then
+            case "${audioserver[0]}" in
+                "pulseaudio")
+                    sudo pacman -S --needed --noconfirm "${audioserver[0]}" pavucontrol pamixer
+                    ;;
+                "pipewire")
+                    sudo pacman -S --needed --noconfirm "${audioserver[0]}" pipewire-pulse pavucontrol pamixer
+                    ;;
+            esac
+            break 
+        else
+            info "${BOLD}${RED}You have to choose only one audio server!${RESET}"
+        fi
+    done
+fi
 
 info "${BOLD}Configuring fonts${RESET}"
 
