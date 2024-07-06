@@ -102,7 +102,7 @@ while true; do
                 sudo pacman -S --needed --noconfirm "${audioserver[0]}"
             ;;
         esac
-        exit
+        break 
     else
         info "${BOLD}${RED}You have to choose only one audio server!${RESET}"
     fi
