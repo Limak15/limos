@@ -159,7 +159,7 @@ info "${BOLD}Configuring sddm${RESET}"
 
 dm=$(systemctl show display-manager.service --property=Id --value)
 
-sudo systemctl disable --now $dm
+sudo systemctl disable $dm
 
 sudo systemctl enable ly.service
 
