@@ -25,6 +25,7 @@ function getresources() {
     fonts
 
     git clone 'https://gitlab.com/limakos/limos-wallpapers.git'
+
     [ ! -d /usr/share/backgrounds ] && sudo mkdir /usr/share/backgrounds
     sudo mv limos-wallpapers /usr/share/backgrounds/
 
