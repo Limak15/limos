@@ -6,10 +6,10 @@ function audioserver() {
 
         case $server_choice in
             "pulseaudio")
-                sudo pacman -S --needed --noconfirm "$server_choice" pavucontrol pamixer
+                sudo pacman -Sy --needed --noconfirm "$server_choice" pavucontrol pamixer
                 ;;
             "pipewire")
-                sudo pacman -S --needed --noconfirm "$server_choice" pipewire-pulse pavucontrol pamixer
+                sudo pacman -Sy --needed --noconfirm "$server_choice" pipewire-pulse pavucontrol pamixer
                 ;;
         esac
     fi
