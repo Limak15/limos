@@ -1,14 +1,11 @@
 #! /usr/bin/env bash
 
-function configfiles() {
+function config_files() {
     [ -f $HOME/.zshrc ] && mv $HOME/.zshrc $HOME/.zshrc.backup
     [ ! -d $HOME/.config ] && mkdir $HOME/.config
     [ -d $HOME/.config ] && mkdir $HOME/.config.backup && cp -rf $HOME/.config $HOME/.config.backup
     [ ! -d $HOME/.local/bin ] && mkdir $HOME/.local/bin
-    [ ! -f $HOME/.xsession ] && touch $HOME/.xsession
 
-
-    echo "xsetroot -cursor_name left_ptr" >> $HOME/.xsession
     cp /etc/limos/zsh/zshrc $HOME/.zshrc
     cp /etc/limos/scripts/* $HOME/.local/bin
     cp -r /etc/limos/polybar $HOME/.config/
@@ -25,6 +22,4 @@ function configfiles() {
     if command -v pulseaudio &> /dev/null || command -v pipewire &> /dev/null; then
         sed -i '/modules-right =  tray alsa network powerbtn/s/alsa/pulseaudio/' ~/.config/polybar/config.ini
     fi
-
-    sudo chsh $USER -s "/bin/zsh"
 }

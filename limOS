@@ -33,9 +33,8 @@
 
 source "./scripts/output.sh"
 source "./scripts/addrepos.sh"
-source "./scripts/audioserver.sh"
 source "./scripts/configfiles.sh"
-source "./scripts/resources.sh"
+source "./scripts/packages.sh"
 source "./scripts/startup.sh"
 source "./scripts/dynamictheme.sh"
 
@@ -46,13 +45,9 @@ msg "LimOS is a post installation script that will install and configure window 
 yn "About dynamic theme: it's a script that will change desktop theme and wallpaper every two hours. You can see all themes here: https://gitlab.com/Limak01/dotfiles/-/tree/master/.screenshots If you disable dynamic theme by default theme number 6 will be used. \n\nDo you want to enable dynamic theme?" && dynamic_theme=true 
 
 addrepos || error "Adding repositories"
-audioserver || error "Adding audioserver"
-
-sudo pacman -Sy --noconfirm --needed - < pkglist.txt || error "Installing essential packages"
-
-getresources || error "Getting resources"
-
-configfiles || error "Copying config files"
+install_packages || error "Installing essential packages"
+config_files || error "Copying config files"
+startupstuff || error "Configuring system startup stuff"
 
 if ! $dynamic_theme; then
     apply_default_theme || error "Applying default theme"  
@@ -60,6 +55,5 @@ else
     enable_dynamic_theme || error "Enabling dynamic theme"
 fi
 
-startupstuff || error "Configuring system startup stuff"
 
 yn "LimOS is installed do you want to reboot?" && reboot

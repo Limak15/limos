@@ -1,9 +1,22 @@
 #!/usr/bin/env bash
 
+crontab_src="0 * * * env DISPLAY=:0 $HOME/.local/bin/limos-theme 0\n\
+0 2 * * * env DISPLAY=:0 $HOME/.local/bin/limos-theme 1\n\ 
+0 4 * * * env DISPLAY=:0 $HOME/.local/bin/limos-theme 2\n\ 
+0 6 * * * env DISPLAY=:0 $HOME/.local/bin/limos-theme 3\n\ 
+0 8 * * * env DISPLAY=:0 $HOME/.local/bin/limos-theme 4\n\ 
+0 10 * * * env DISPLAY=:0 $HOME/.local/bin/limos-theme 5\n\ 
+0 12 * * * env DISPLAY=:0 $HOME/.local/bin/limos-theme 6\n\ 
+0 14 * * * env DISPLAY=:0 $HOME/.local/bin/limos-theme 7\n\ 
+0 16 * * * env DISPLAY=:0 $HOME/.local/bin/limos-theme 8\n\ 
+0 18 * * * env DISPLAY=:0 $HOME/.local/bin/limos-theme 9\n\ 
+0 20 * * * env DISPLAY=:0 $HOME/.local/bin/limos-theme 10\n\ 
+0 22 * * * env DISPLAY=:0 $HOME/.local/bin/limos-theme 11\n"
+
 function enable_dynamic_theme() {
     echo "~/.local/bin/limos-theme" >> $HOME/.xsession
     sudo systemctl enable --now cronie.service
-    crontab crontab.txt
+    crontab $crontab_src 
 }
 
 function apply_default_theme() {
