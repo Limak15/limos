@@ -11,7 +11,7 @@ crontab_src="0 * * * env DISPLAY=:0 $HOME/.local/bin/limos-theme 0\n\
 0 16 * * * env DISPLAY=:0 $HOME/.local/bin/limos-theme 8\n\ 
 0 18 * * * env DISPLAY=:0 $HOME/.local/bin/limos-theme 9\n\ 
 0 20 * * * env DISPLAY=:0 $HOME/.local/bin/limos-theme 10\n\ 
-0 22 * * * env DISPLAY=:0 $HOME/.local/bin/limos-theme 11\n"
+0 22 * * * env DISPLAY=:0 $HOME/.local/bin/limos-theme 11"
 
 function enable_dynamic_theme() {
     echo "~/.local/bin/limos-theme" >> $HOME/.xsession
