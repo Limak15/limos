@@ -31,252 +31,35 @@
 # DESC: Arch Linux post installation script that will install and configure window manager along with all applications and utilities that are needed to create fully functional desktop environment.
 # WARNING: Run this script at your own risk.
 
-# Formatting
-RESET="\033[0m" # Reset all foramting styles and colors
-BOLD="\033[1m"
-BOLDR="\033[22m" #Reset bold only styles
+source "./scripts/output.sh"
+source "./scripts/addrepos.sh"
+source "./scripts/audioserver.sh"
+source "./scripts/configfiles.sh"
+source "./scripts/resources.sh"
+source "./scripts/startup.sh"
+source "./scripts/dynamictheme.sh"
 
-# Colors
-RED="\033[31m"
-GREEN="\033[32m"
-YELLOW="\033[33m"
-
-limos_repo_section="[limos-main-repo]\nSigLevel = Optional DatabaseOptional\nServer = https://gitlab.com/limakos/limos-main-repo/-/raw/master/"'$arch'
-chaotic_aur="[chaotic-aur]\nInclude = /etc/pacman.d/chaotic-mirrorlist"
 dynamic_theme=false
 
-info() {
-    echo -e "#######${BOLD}${YELLOW} INFO ${RESET}################################################################"
-    echo -e "$1"
-    echo -e "#############################################################################\n"
-}
+msg "LimOS is a post installation script that will install and configure window manager along with all applications and utilities that are needed to create fully functional desktop environment. This script should work on any Arch Linux distro. You run this script at your own risk!"
 
-info " ${BOLD}LimOS${BOLDR} is a post installation script that will install\n\
- and configure window manager along with all applications\n\
- and utilities that are needed to create fully functional desktop environment.\n\
- This script should only be used on bare Arch Linux i didn't test it on Arch with \n\
- KDE or GNOME installed"
+yn "About dynamic theme: it's a script that will change desktop theme and wallpaper every two hours. You can see all themes here: https://gitlab.com/Limak01/dotfiles/-/tree/master/.screenshots If you disable dynamic theme by default theme number 6 will be used. \n\nDo you want to enable dynamic theme?" && dynamic_theme=true 
 
-while true; do
-    echo -n -e "${BOLD}Do you want to continue? (Yy Nn): ${BOLDR}"
-    read choice
+addrepos || error "Adding repositories"
+audioserver || error "Adding audioserver"
 
-    case $choice in
-        [Yy]* ) break;;
-        [Nn]* ) exit;;
-        * ) echo "Please answer yes or no."
-    esac
-done
+sudo pacman -Sy --noconfirm --needed - < pkglist.txt || error "Installing essential packages"
 
-info " ${BOLD}About dynamic theme: ${RESET} it's a script\n\
- that will change desktop theme and wallpaper every two hours.\n\
- You can see all themes here: https://gitlab.com/Limak01/dotfiles/-/tree/master/.screenshots\n\
- If you disable dynamic theme by default theme number 6 will be used"
+getresources || error "Getting resources"
 
-while true; do
-    echo -n -e "${BOLD}Do you want enable dynamic theme? (Yy Nn): ${BOLDR}"
-    read choice
-
-    case $choice in
-        [Yy]* ) dynamic_theme=true;break;;
-        [Nn]* ) break;;
-        * ) echo "Please answer yes or no."
-    esac
-done
-
-info " ${BOLD}Installing LimOS${BOLDR}"
-
-info "${BOLD}Adding LimOS repository${RESET}"
-
-#Backup pacman.conf file
-sudo cp /etc/pacman.conf /etc/pacman.conf.bak 
-
-echo -e $limos_repo_section | sudo tee -a /etc/pacman.conf
-
-info "${BOLD}Adding Chaotic AUR repository${RESET}"
-
-sudo pacman-key --recv-key 3056513887B78AEB --keyserver keyserver.ubuntu.com
-sudo pacman-key --lsign-key 3056513887B78AEB
-yes | sudo pacman -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst'
-yes | sudo pacman -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst'
-
-echo -e $chaotic_aur | sudo tee -a /etc/pacman.conf
-
-
-info "${BOLD}Installing essential packages${RESET}"
-
-sudo pacman -Sy --noconfirm --needed - < pkglist.txt
-
-browsers=($(./checkbox --title "Choose browsers" "firefox|Mozilla Firefox|OFF" "chaotic-aur/brave|Brave Browser|OFF" "chaotic-aur/librewolf|LibreWolf|OFF" "chromium|Chromium|OFF" "vivaldi|Vivaldi|OFF" "chaotic-aur/microsoft-edge-stable|Microsoft Edge|OFF" "chaotic-aur/ungoogled-chromium|Ungoogled Chromium|OFF" "chaotic-aur/google-chrome|Google Chrome|OFF"))
-
-info "${BOLD}Installing ${#browsers[@]} browsers${RESET}"
-
-[ ${#browsers[@]} -gt 0 ] && sudo pacman -S --needed --noconfirm "${browsers[@]}"
-
-multimedia=($(./checkbox --title "Other programs" "chaotic-aur/deadbeef|DeaDBeeF Music Player|OFF" "strawberry|Strawberry Music Player|OFF" "chaotic-aur/spotify|Spotify Music Player|OFF" "chaotic-aur/nomacs|Nomacs Image Viewer|OFF" "eog|Eye Of Gnome Image Viewer|OFF" "gthumb|gThumb Image Viewer|OFF" "vlc|VLC Multimedia Player|OFF" "mpv|MPV Multimedia Player|OFF" "chaotic-aur/clapper|Clapper Multimedia Player|OFF" "obs-studio|OBS Broadcast Software|OFF" "gimp|Gimp|OFF" "discord|Discord|OFF" "thunderbird|Thunderbird|OFF" "telegram-desktop|Telegram|OFF" "signal-desktop|Signal|OFF"))
-
-info "${BOLD}Installing ${#multimedia[@]} programs${RESET}"
-
-[ ${#multimedia[@]} -gt 0 ] && sudo pacman -S --needed --noconfirm "${multimedia[@]}"
-
-if ! command -v pulseaudio &> /dev/null && ! command -v pipewire &> /dev/null; then
-    while true; do
-        audioserver=($(./checkbox --title "Audio server (No choice = alsa)" "pulseaudio|PulseAudio|OFF" "pipewire|PipeWire|OFF"))
-
-        [ ${#audioserver[@]} -eq 0 ] && info "${BOLD}No choice! Alsa will be used.${RESET}" && break
-
-        if [ ${#audioserver[@]} -eq 1 ]; then
-            case "${audioserver[0]}" in
-                "pulseaudio")
-                    sudo pacman -S --needed --noconfirm "${audioserver[0]}" pavucontrol pamixer
-                    ;;
-                "pipewire")
-                    sudo pacman -S --needed --noconfirm "${audioserver[0]}" pipewire-pulse pavucontrol pamixer
-                    ;;
-            esac
-            break 
-        else
-            info "${BOLD}${RED}You have to choose only one audio server!${RESET}"
-        fi
-    done
-fi
-
-info "${BOLD}Configuring fonts${RESET}"
-
-mkdir -p $HOME/.local/share/fonts/{ttf,otf}
-cp -r /etc/limos/Feather $HOME/.local/share/fonts/ttf/
-wget 'https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/Meslo.zip'
-unzip Meslo.zip -d $HOME/.local/share/fonts/ttf/Meslo/
-wget 'https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/Mononoki.zip'
-unzip Mononoki.zip -d $HOME/.local/share/fonts/ttf/Mononoki/
-wget 'https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/RobotoMono.zip'
-unzip RobotoMono.zip -d $HOME/.local/share/fonts/ttf/RobotoMono/
-chown $USER:$USER $HOME/.local/share/fonts/*
-rm Meslo.zip Mononoki.zip RobotoMono.zip
-
-info "${BOLD}Changing shell to zsh${RESET}"
-
-sudo chsh $USER -s "/bin/zsh" 1> /dev/null 2> error.txt || err "Changing shell to zsh"
-
-info "${BOLD}Installing zsh plugins${RESET}"
-
-git clone 'https://github.com/zsh-users/zsh-autosuggestions' ~/.zsh/zsh-autosuggestions
-git clone 'https://github.com/zsh-users/zsh-syntax-highlighting.git' ~/.zsh/zsh-syntax-highlighting
-
-info "${BOLD}Configuring themes and scripts${RESET}"
-
-git clone 'https://gitlab.com/limakos/limos-wallpapers.git'
-
-[ ! -d /usr/share/backgrounds ] && sudo mkdir /usr/share/backgrounds
-
-sudo mv limos-wallpapers /usr/share/backgrounds/
-
-[ ! -d $HOME/.local/bin ] && mkdir $HOME/.local/bin
-
-cp /etc/limos/scripts/* $HOME/.local/bin
-
-[ ! -f $HOME/.xsession ] && touch $HOME/.xsession
-
-$dynamic_them && echo "~/.local/bin/limos-theme" >> $HOME/.xsession
-echo "xsetroot -cursor_name left_ptr" >> $HOME/.xsession
-
-if $dynamic_theme; then
-    info "Adding cronjob for themes"
-    sudo systemctl enable --now cronie.service
-    crontab crontab.txt
-fi
-
-info "${BOLD}Configuring sddm${RESET}"
-
-dm=$(systemctl show display-manager.service --property=Id --value)
-
-sudo systemctl disable $dm
-
-sudo systemctl enable ly.service
-
-info "${BOLD}Copying LimOS config files${RESET}"
-
-[ -f $HOME/.zshrc ] && mv $HOME/.zshrc $HOME/.zshrc.backup
-cp /etc/limos/zsh/zshrc $HOME/.zshrc
-
-[ ! -d $HOME/.config ] && mkdir $HOME/.config
-[ -d $HOME/.config ] && mkdir $HOME/.config.backup && cp -rf $HOME/.config $HOME/.config.backup
-
-cp -r /etc/limos/polybar $HOME/.config/
-cp -r /etc/limos/xmonad $HOME/.config/
-cp -r /etc/limos/rofi $HOME/.config/
-cp -r /etc/limos/kitty $HOME/.config/
-cp -r /etc/limos/dunst $HOME/.config/
-cp -r /etc/limos/picom $HOME/.config/
-sudo cp -r /etc/limos/plymouth /usr/share/plymouth/themes/limos 
-
-if command -v pulseaudio &> /dev/null || command -v pipewire &> /dev/null; then
-    sed -i '/modules-right =  tray alsa network powerbtn/s/alsa/pulseaudio/' ~/.config/polybar/config.ini
-fi
+configfiles || error "Copying config files"
 
 if ! $dynamic_theme; then
-    info "${BOLD}Applying default theme${RESET}"
-
-    path=/usr/share/backgrounds/limos-wallpapers
-    polybar_path=~/.config/polybar/config.ini
-    xmonad_path=~/.config/xmonad/xmonad.hs
-    rofi_powermenu_path=~/.config/rofi/powermenu/powermenu.rasi
-    rofi_message_path=~/.config/rofi/powermenu/message.rasi
-    rofi_confirm_path=~/.config/rofi/powermenu/confirm.rasi
-    rofi_finder_path=~/.config/rofi/config.rasi
-    dunst_path=~/.config/dunst/dunstrc
-
-    if [ -f "$polybar_path" ]; then
-        sed -i "s/include-file = colors\/[^ ]*/include-file = colors\/colors6.ini/g" "$polybar_path"
-    fi
-
-    kitten themes --reload-in=all "color6"
-
-    if [ -f "$xmonad_path" ]; then
-        sed -i 's/import Colors\.[^ ]*/import Colors.Colors6/g' "$xmonad_path"
-    fi
-
-    if [ -f "$rofi_powermenu_path" ] && [ -f "$rofi_confirm_path" ] && [ -f "$rofi_message_path" ] && [ -f "$rofi_finder_path" ]; then
-        sed -i 's/@import "..\/[^"]*"/@import "..\/colors\/colors6.rasi"/g' "$rofi_powermenu_path"
-        sed -i 's/@import "..\/[^"]*"/@import "..\/colors\/colors6.rasi"/g' "$rofi_message_path"
-        sed -i 's/@import "..\/[^"]*"/@import "..\/colors\/colors6.rasi"/g' "$rofi_confirm_path"
-        sed -i 's/@import "[^"]*"/@import "colors\/colors6.rasi"/g' "$rofi_finder_path"
-    fi
-
-    if [ -f "$dunst_path" ]; then
-        dunst_colors=$HOME/.config/dunst/colors
-        bg=$(awk -F= '/background/ {print $2}' "$dunst_colors/colors6.txt")
-        fg=$(awk -F= '/foreground/ {print $2}' "$dunst_colors/colors6.txt")
-        fr=$(awk -F= '/frame/ {print $2}' "$dunst_colors/colors6.txt")
-
-        sed -i -e 's/background = "#[^"]*"/background = "'"$bg"'"/g' -e 's/foreground = "#[^"]*"/foreground = "'"$fg"'"/g' -e 's/frame_color = "#[^"]*"/frame_color = "'"$fr"'"/g' "$dunst_path" 
-    fi
+    apply_default_theme || error "Applying default theme"  
+else
+    enable_dynamic_theme || error "Enabling dynamic theme"
 fi
 
-info "${BOLD}Adding network interface to polybar config${RESET}"
+startupstuff || error "Configuring system startup stuff"
 
-network_interface=$(ip -o link show | awk '$9 == "UP" {print $2}' | sed 's/://')
-
-[ -f "$HOME/.config/polybar/config.ini" ] && sed -i 's/interface = .*/interface = '"$network_interface"'/' $HOME/.config/polybar/config.ini
-
-info "${BOLD}Configuring plymouth${RESET}"
-
-sudo sed -i 's/GRUB_CMDLINE_LINUX_DEFAULT="[^"]*"/GRUB_CMDLINE_LINUX_DEFAULT="quiet splash"/' /etc/default/grub
-
-sudo grub-mkconfig -o /boot/grub/grub.cfg
-
-sudo sed -i 's/\(HOOKS=(base udev autodetect microcode modconf kms keyboard keymap consolefont block filesystems fsck\))/\1 plymouth)/' /etc/mkinitcpio.conf
-
-sudo plymouth-set-default-theme -R limos
-
-
-while true; do
-    echo -n -e "${BOLD}LimOS is installed do you want to reboot? (Yy Nn): ${BOLDR}"
-    read choice
-
-    case $choice in
-        [Yy]* ) reboot;;
-        [Nn]* ) break;;
-        * ) echo "Please answer yes or no."
-    esac
-done
+yn "LimOS is installed do you want to reboot?" && reboot

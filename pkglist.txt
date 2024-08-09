@@ -51,3 +51,5 @@ base-devel
 plymouth
 limos-plymouth
 alsa-utils
+firefox
+nomacs
