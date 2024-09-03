@@ -1,7 +1,7 @@
 #! /usr/bin/env bash
 
 function config_files() {
-    [ -f $HOME/.zshrc ] && mv $HOME/.zshrc $HOME/.zshrc.backup
+    [ -f $HOME/.bashrc ] && mv $HOME/.zshrc $HOME/.bashrc.backup
     [ ! -d $HOME/.config ] && mkdir $HOME/.config
     [ -d $HOME/.config ] && mkdir $HOME/.config.backup && cp -rf $HOME/.config $HOME/.config.backup
     [ ! -d $HOME/.local/bin ] && mkdir $HOME/.local/bin
@@ -10,7 +10,7 @@ function config_files() {
         cp -r "$dir" "$HOME/.config/"
     done
 
-    cp /etc/limos/zsh/zshrc $HOME/.zshrc
+    cp /etc/limos/bash/bashrc $HOME/.bashrc
     cp /etc/limos/scripts/* $HOME/.local/bin
     sudo cp -r /etc/limos/plymouth /usr/share/plymouth/themes/limos 
 
@@ -23,4 +23,6 @@ function config_files() {
 
     feh --bg-scale /usr/share/backgrounds/7.jpg
     echo "~/.fehbg &" > ~/.xsession
+
+    kitten themes "default"
 }
