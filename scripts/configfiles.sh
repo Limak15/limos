@@ -6,14 +6,12 @@ function config_files() {
     [ -d $HOME/.config ] && mkdir $HOME/.config.backup && cp -rf $HOME/.config $HOME/.config.backup
     [ ! -d $HOME/.local/bin ] && mkdir $HOME/.local/bin
 
+    for dir in /etc/limos/{polybar,xmonad,rofi,kitty,dunst,picom}; do
+        cp -r "$dir" "$HOME/.config/"
+    done
+
     cp /etc/limos/zsh/zshrc $HOME/.zshrc
     cp /etc/limos/scripts/* $HOME/.local/bin
-    cp -r /etc/limos/polybar $HOME/.config/
-    cp -r /etc/limos/xmonad $HOME/.config/
-    cp -r /etc/limos/rofi $HOME/.config/
-    cp -r /etc/limos/kitty $HOME/.config/
-    cp -r /etc/limos/dunst $HOME/.config/
-    cp -r /etc/limos/picom $HOME/.config/
     sudo cp -r /etc/limos/plymouth /usr/share/plymouth/themes/limos 
 
     network_interface=$(ip -o link show | awk '$9 == "UP" {print $2}' | sed 's/://')
@@ -22,4 +20,7 @@ function config_files() {
     if command -v pulseaudio &> /dev/null || command -v pipewire &> /dev/null; then
         sed -i '/modules-right =  tray alsa network powerbtn/s/alsa/pulseaudio/' ~/.config/polybar/config.ini
     fi
+
+    feh --bg-scale /usr/share/backgrounds/7.jpg
+    echo "~/.fehbg &" > ~/.xsession
 }

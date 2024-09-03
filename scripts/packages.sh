@@ -41,9 +41,4 @@ function install_packages() {
 
     [ ! -d /usr/share/backgrounds ] && sudo mkdir /usr/share/backgrounds
     sudo mv limos-wallpapers /usr/share/backgrounds/
-
-    git clone 'https://github.com/zsh-users/zsh-autosuggestions' ~/.zsh/zsh-autosuggestions
-    git clone 'https://github.com/zsh-users/zsh-syntax-highlighting.git' ~/.zsh/zsh-syntax-highlighting
-
-    sudo chsh $USER -s "/bin/zsh"
 }
