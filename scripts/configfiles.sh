@@ -20,8 +20,9 @@ function config_files() {
     if command -v pulseaudio &> /dev/null || command -v pipewire &> /dev/null; then
         sed -i '/modules-right =  tray alsa network powerbtn/s/alsa/pulseaudio/' ~/.config/polybar/config.ini
     fi
-
-    feh --bg-scale /usr/share/backgrounds/7.jpg
+    
+    echo "feh --no-fehbg --bg-scale '/usr/share/backgrounds/7.jpg'" > ~/.fehbg
+    chmod 755 ~/.fehbg
     echo "~/.fehbg &" > ~/.xsession
 
     kitten themes "default"

@@ -1,6 +1,6 @@
 #! /usr/bin/env bash
 
-packages=("git" "wget" "fakeroot" "which" "xmonad" "limos-xmonad" "xmonad-contrib" "polybar" "limos-polybar" "kitty" "limos-kitty" "rofi" "limos-rofi" "picom" "flameshot" "neovim" "limos-ttf-feather" "qt5-quickcontrols" "qt5-graphicaleffects" "vlc" "ntfs-3g" "pcmanfm" "slock" "xdg-user-dirs" "papirus-icon-theme" "xorg-server" "unzip" "mousepad" "lxappearance" "qt6ct" "ly" "kvantum" "lsd" "zsh" "limos-zsh" "starship" "dunst" "udiskie" "ffmpegthumbnailer" "xorg" "nm-connection-editor" "feh" "limos-scripts" "limos-dunst" "zoxide" "limos-picom" "fzf" "base-devel" "plymouth" "limos-plymouth" "alsa-utils" "firefox" "nomacs")
+packages=("git" "wget" "fakeroot" "which" "xmonad" "limos-xmonad" "xmonad-contrib" "polybar" "limos-polybar" "kitty" "limos-kitty" "rofi" "limos-rofi" "picom" "flameshot" "neovim" "limos-ttf-feather" "qt5-quickcontrols" "qt5-graphicaleffects" "vlc" "ntfs-3g" "pcmanfm" "slock" "xdg-user-dirs" "papirus-icon-theme" "xorg-server" "unzip" "mousepad" "lxappearance" "qt6ct" "ly" "kvantum" "lsd" "zsh" "limos-bash" "starship" "dunst" "udiskie" "ffmpegthumbnailer" "xorg" "nm-connection-editor" "feh" "limos-scripts" "limos-dunst" "zoxide" "limos-picom" "fzf" "base-devel" "plymouth" "limos-plymouth" "alsa-utils" "firefox" "nomacs")
 
 fonts=(
     "https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/Meslo.zip"
