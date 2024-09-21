@@ -21,7 +21,7 @@ function config_files() {
         sed -i '/modules-right =  tray alsa network powerbtn/s/alsa/pulseaudio/' ~/.config/polybar/config.ini
     fi
     
-    echo "feh --no-fehbg --bg-scale '/usr/share/backgrounds/limos-wallpapers/7.jpg'" > ~/.fehbg
+    echo "feh --no-fehbg --bg-scale '/usr/share/backgrounds/limos-wallpapers/limos-dark.png'" > ~/.fehbg
     chmod 755 ~/.fehbg
     echo "~/.fehbg &" > ~/.xsession
 
