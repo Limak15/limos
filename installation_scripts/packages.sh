@@ -22,7 +22,7 @@ function install_packages() {
     fi
     
     mkdir -p $HOME/.local/share/fonts/{ttf,otf}
-    cp -r ../fonts/Feather $HOME/.local/share/fonts/ttf/
+    cp -r ./fonts/Feather $HOME/.local/share/fonts/ttf/
 
     if fc-list | grep -q "$FONT_NAME"; then
         echo "$FONT_NAME is already installed"
