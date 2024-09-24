@@ -1,18 +1,17 @@
 #! /usr/bin/env bash
 
-function config_files() {
-    [ -f $HOME/.bashrc ] && mv $HOME/.zshrc $HOME/.bashrc.backup
+function copy_config_files() {
+    [ -f $HOME/.bashrc ] && mv $HOME/.bashrc $HOME/.bashrc.old
     [ ! -d $HOME/.config ] && mkdir $HOME/.config
-    [ -d $HOME/.config ] && mkdir $HOME/.config.backup && cp -rf $HOME/.config $HOME/.config.backup
-    [ ! -d $HOME/.local/bin ] && mkdir $HOME/.local/bin
+    [ ! -d $HOME/.local/bin ] && mkdir -p $HOME/.local/bin
 
-    for dir in /etc/limos/{polybar,xmonad,rofi,kitty,dunst,picom}; do
+    for dir in ../config/{polybar,xmonad,rofi,kitty,dunst,picom}; do
         cp -r "$dir" "$HOME/.config/"
     done
 
-    cp /etc/limos/bash/bashrc $HOME/.bashrc
-    cp /etc/limos/scripts/* $HOME/.local/bin
-    sudo cp -r /etc/limos/plymouth /usr/share/plymouth/themes/limos 
+    cp ../config/bash/bashrc $HOME/.bashrc
+    cp ../DEscripts/* $HOME/.local/bin
+    sudo cp -r ../config/plymouth /usr/share/plymouth/themes/limos 
 
     network_interface=$(ip -o link show | awk '$9 == "UP" {print $2}' | sed 's/://')
     [ -f "$HOME/.config/polybar/config.ini" ] && sed -i 's/interface = .*/interface = '"$network_interface"'/' $HOME/.config/polybar/config.ini
@@ -24,6 +23,4 @@ function config_files() {
     echo "feh --no-fehbg --bg-scale '/usr/share/backgrounds/limos-wallpapers/limos-dark.png'" > ~/.fehbg
     chmod 755 ~/.fehbg
     echo "~/.fehbg &" > ~/.xsession
-
-    kitten themes "default"
 }

@@ -33,17 +33,17 @@
 # DESC: Arch Linux post installation script that will install and configure window manager along with all applications and utilities that are needed to create fully functional desktop environment.
 # WARNING: Run this script at your own risk.
 
-source "./scripts/output.sh"
-source "./scripts/addrepos.sh"
-source "./scripts/configfiles.sh"
-source "./scripts/packages.sh"
-source "./scripts/startup.sh"
+source "./installation_scripts/output.sh"
+source "./installation_scripts/addrepos.sh"
+source "./installation_scripts/configfiles.sh"
+source "./installation_scripts/packages.sh"
+source "./installation_scripts/startup.sh"
 
 msg "LimOS is a post installation script that will install and configure window manager along with all applications and utilities that are needed to create fully functional desktop environment. This script should work on any Arch Linux distro. You run this script at your own risk!"
 
 addrepos || error "Adding repositories"
 install_packages || error "Installing essential packages"
-config_files || error "Copying config files"
+copy_config_files || error "Copying config files"
 startupstuff || error "Configuring system startup stuff"
 
 yn "LimOS is installed do you want to reboot?" && reboot

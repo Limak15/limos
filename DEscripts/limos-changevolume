@@ -1,0 +1,86 @@
+#!/bin/bash
+
+icons_path="$HOME/.config/dunst/icons"
+volume_full="${icons_path}/volume-2.svg"
+volume_medium="${icons_path}/volume-1.svg"
+volume_low="${icons_path}/volume.svg"
+volume_muted="${icons_path}/volume-x.svg"
+pipewire_or_pulse=false
+
+if command -v pipewire &> /dev/null || command -v pulseaudio &> /dev/null; then
+	pipewire_or_pulse=true
+	
+	if ! command -v pamixer &> /dev/null; then
+		notify-send "You have pulseaudio or pipewire installed but you dont have pamixer installed. Please install it or this script will not work!"
+		exit
+	fi
+fi
+
+
+function send_notification() {
+	if $pipewire_or_pulse; then
+		volume=$(pamixer --get-volume)
+	else
+		volume=$(amixer -M get Master | grep -oE '[0-9]{1,3}%' | awk -F'%' '{print $1}')
+	fi
+	
+	#Display different icon based on actual volume level
+	if [ $volume -eq 0 ]
+	then
+		display_icon=$volume_muted
+	elif [ $volume -le 20 ]
+	then
+		display_icon=$volume_low
+	elif [ $volume -gt 20 ] && [ $volume -le 70 ]
+	then
+		display_icon=$volume_medium
+	else
+		display_icon=$volume_full
+	fi
+	
+	#Show notification
+	dunstify -a "changevolume" -u low -r "9993" -h int:value:"$volume" -i "${display_icon}" "Volume: ${volume}%" -t 2000
+}
+
+case $1 in
+up)
+	if $pipewire_or_pulse; then
+		pamixer -u
+		pamixer -i 5
+	else
+    		[ "$(amixer get Master | grep -oE '\[o.+\]')" == "[off]" ] && amixer sset Master toggle
+    		amixer -M set Master 5%+
+	fi
+	send_notification $1
+	;;
+down)
+	if $pipewire_or_pulse; then
+		pamixer -u
+		pamixer -d 5
+	else
+    		[ "$(amixer get Master | grep -oE '\[o.+\]')" == "[off]" ] && amixer sset Master toggle
+    		amixer -M set Master 5%-
+	fi
+	send_notification $1
+	;;
+mute)
+	if $pipewire_or_pulse; then
+		pamixer -t
+		if $(pamixer --get-mute);
+		then
+			dunstify -i "${volume_muted}" -a "changevolume" -t 2000 -r 9993 -u low "Muted"
+		else
+			send_notification up
+		fi
+	else
+		if [ "$(amixer get Master | grep -oE '\[o.+\]')" == "[on]" ]; 
+		then
+			amixer sset Master toggle
+			dunstify -i "${volume_muted}" -a "changevolume" -t 2000 -r 9993 -u low "Muted"
+		else
+			amixer sset Master toggle
+			send_notification up
+		fi
+	fi
+	;;
+esac
