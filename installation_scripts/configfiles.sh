@@ -13,7 +13,13 @@ function copy_config_files() {
     cp -r ./config/bash/fastfetch $HOME/.config/
     cp ./config/starship/starship.toml $HOME/.config/starship.toml
     cp ./DEscripts/* $HOME/.local/bin
-    sudo cp -r ./config/plymouth /usr/share/plymouth/themes/limos 
+    sudo cp -r ./config/plymouth /usr/share/plymouth/themes/limos
+
+    [ ! -d $HOME/.icons ] && mkdir $HOME/.icons
+    [ ! -d $HOME/.themes ] && mkdir $HOME/.themes
+
+    cp -r ./themes/gtk/Fluent-green-Dark $HOME/.themes/
+    cp -r ./themes/icons/* $HOME/.icons/
 
     network_interface=$(ip -o link show | awk '$9 == "UP" {print $2}' | sed 's/://')
     [ -f "$HOME/.config/polybar/config.ini" ] && sed -i 's/interface = .*/interface = '"$network_interface"'/' $HOME/.config/polybar/config.ini
