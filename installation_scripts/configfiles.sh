@@ -15,10 +15,6 @@ function copy_config_files() {
     cp ./DEscripts/* $HOME/.local/bin
     sudo cp -r ./config/plymouth /usr/share/plymouth/themes/limos 
 
-    #Copy gtk and qt themes
-    cp -r ./themes/Fluent-green-Dark/ $HOME/.themes
-    cp -r ./themes/icons-Fluent-green-dark/ $HOME/.themes
-
     network_interface=$(ip -o link show | awk '$9 == "UP" {print $2}' | sed 's/://')
     [ -f "$HOME/.config/polybar/config.ini" ] && sed -i 's/interface = .*/interface = '"$network_interface"'/' $HOME/.config/polybar/config.ini
 
