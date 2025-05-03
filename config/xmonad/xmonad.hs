@@ -161,7 +161,6 @@ myManageHook = composeAll
 --Executes every time xmonad starts
 myStartupHook = do
   spawnOnce "dunst &"
-  spawnOnce "picom &"
   spawnOnce "udiskie --tray &"
   spawnOnce "flameshot &"
   spawn "$HOME/.config/polybar/launch.sh"
