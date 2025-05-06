@@ -62,18 +62,8 @@ myFocusedBorderColor :: String -- Focused window border color
 myFocusedBorderColor = "#2cc55d" 
 
 --Workspace names
-myWorkspaces :: [String]
-myWorkspaces = [
-    "1",
-    "2",
-    "3",
-    "4",
-    "5",
-    "6",
-    "7",
-    "8",
-    "9"
-    ]
+myWorkspaces :: [WorkspaceId]
+myWorkspaces = map show [1..9]
 
 
 -- Key bindings
@@ -119,6 +109,18 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
         (i, k) <- zip (XMonad.workspaces conf) [xK_1 .. xK_9], -- mod-[1..9], Switch to workspace N
         (f, m) <- [(W.greedyView, 0), (W.shift, shiftMask)]    -- mod-shift-[1..9], Move client to workspace N
     ]
+    -- For two monitor setup
+    -- Workspaces 7 to 9 opens on left monitor rest on the right
+    -- ++
+    --[
+    --    ((modm, k), windows (viewOnScreen sc ws)) |
+    --    (ws, k, sc) <- zip3 (map show [1..6] ++ map show [7..9]) [xK_1..xK_9] (replicate 6 1 ++ replicate 4 0)
+    --]
+    -- ++
+    --[ 
+    --    ((modm .|. shiftMask, k), windows (W.shift ws)) |
+    --    (ws, k) <- zip (map show [1..9]) [xK_1..xK_9]
+    --]
     ++
     [
         ((m .|. modm, key), screenWorkspace sc >>= flip whenJust (windows . f)) | 
