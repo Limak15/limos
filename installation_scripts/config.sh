@@ -1,6 +1,6 @@
 #! /usr/bin/env bash
 
-function copy_config_files() {
+function configure_desktop() {
     [ -f $HOME/.bashrc ] && mv $HOME/.bashrc $HOME/.bashrc.old
     [ ! -d $HOME/.config ] && mkdir $HOME/.config
     [ ! -d $HOME/.local/bin ] && mkdir -p $HOME/.local/bin
@@ -21,8 +21,20 @@ function copy_config_files() {
     cp -r ./themes/gtk/Fluent-green-Dark $HOME/.themes/
     cp -r ./themes/icons/* $HOME/.icons/
 
-    network_interface=$(ip -o link show | awk '$9 == "UP" {print $2}' | sed 's/://')
-    [ -f "$HOME/.config/polybar/config.ini" ] && sed -i 's/interface = .*/interface = '"$network_interface"'/' $HOME/.config/polybar/config.ini
+    wired_iface=$(ip link | awk -F: '/state UP/ && $2 ~ /en|eth/ {gsub(/ /,""); print $2}' | head -n1)
+    wireless_iface=$(ip link | awk -F: '/state UP/ && $2 ~ /wl/ {gsub(/ /,""); print $2}' | head -n1)
+
+    [ -n "$wired_iface" ] && sed -i "s/interface = .*/interface = $wired_iface/" "$CONFIG_PATH"
+    [ -n "$wireless_iface" ] && sed -i "s/interface = .*/interface = $wireless_iface/" "$CONFIG_PATH"
+
+    modules="tray pulseaudio"
+
+    [ -n "$wireless_iface" ] && modules="$modules wireless-network"
+    [ -n "$wired_iface" ] && modules="$modules wired-network"
+
+    modules="$modules powerbtn"
+
+    sed -i "s/^modules-right = .*/modules-right = $modules/" "$CONFIG_PATH"
 
     if command -v pulseaudio &> /dev/null || command -v pipewire &> /dev/null; then
         sed -i '/modules-right =  tray alsa network powerbtn/s/alsa/pulseaudio/' ~/.config/polybar/config.ini
