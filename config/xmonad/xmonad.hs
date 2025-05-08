@@ -165,6 +165,7 @@ myStartupHook = do
   spawnOnce "dunst &"
   spawnOnce "udiskie --tray &"
   spawnOnce "xfce4-power-manager &"
+  spawnOnce "nm-applet &"
   spawnOnce "flameshot &"
   spawn "$HOME/.config/polybar/launch.sh"
 

@@ -21,21 +21,6 @@ function configure_desktop() {
     cp -r ./themes/gtk/Fluent-green-Dark $HOME/.themes/
     cp -r ./themes/icons/* $HOME/.icons/
 
-    wired_iface=$(ip link | awk -F: '/state UP/ && $2 ~ /en|eth/ {gsub(/ /,""); print $2}' | head -n1)
-    wireless_iface=$(ip link | awk -F: '/state UP/ && $2 ~ /wl/ {gsub(/ /,""); print $2}' | head -n1)
-
-    [ -n "$wired_iface" ] && sed -i "s/interface = .*/interface = $wired_iface/" "$CONFIG_PATH"
-    [ -n "$wireless_iface" ] && sed -i "s/interface = .*/interface = $wireless_iface/" "$CONFIG_PATH"
-
-    modules="tray pulseaudio"
-
-    [ -n "$wireless_iface" ] && modules="$modules wireless-network"
-    [ -n "$wired_iface" ] && modules="$modules wired-network"
-
-    modules="$modules powerbtn"
-
-    sed -i "s/^modules-right = .*/modules-right = $modules/" "$CONFIG_PATH"
-
     if command -v pulseaudio &> /dev/null || command -v pipewire &> /dev/null; then
         sed -i '/modules-right =  tray alsa network powerbtn/s/alsa/pulseaudio/' ~/.config/polybar/config.ini
     fi
