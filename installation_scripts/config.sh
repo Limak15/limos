@@ -20,10 +20,6 @@ function configure_desktop() {
 
     cp -r ./themes/gtk/Fluent-green-Dark $HOME/.themes/
     cp -r ./themes/icons/* $HOME/.icons/
-
-    if command -v pulseaudio &> /dev/null || command -v pipewire &> /dev/null; then
-        sed -i '/modules-right =  tray alsa network powerbtn/s/alsa/pulseaudio/' ~/.config/polybar/config.ini
-    fi
     
     echo "feh --no-fehbg --bg-scale '/usr/share/backgrounds/limos-wallpapers/limos-dark.png'" > ~/.fehbg
     chmod 755 ~/.fehbg

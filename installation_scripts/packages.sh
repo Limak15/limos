@@ -1,25 +1,12 @@
 #! /usr/bin/env bash
 
-packages=("git" "wget" "fakeroot" "xfce4-power-manager" "which" "xmonad" "xmonad-contrib" "polybar" "kitty" "rofi" "flameshot" "neovim" "qt5-quickcontrols" "qt5-graphicaleffects" "vlc" "ntfs-3g" "thunar" "slock" "xdg-user-dirs" "xorg-server" "unzip" "mousepad" "lxappearance-gtk3" "qt6ct" "ly" "kvantum" "lsd" "starship" "dunst" "udiskie" "ffmpegthumbnailer" "xorg" "nm-connection-editor" "feh" "zoxide" "fzf" "base-devel" "plymouth" "alsa-utils" "firefox" "nomacs" "fastfetch")
+packages=("git" "wget" "fakeroot" "xfce4-power-manager" "which" "pulseaudio" "pavucontrol" "pamixer" "xmonad" "xmonad-contrib" "polybar" "kitty" "rofi" "flameshot" "neovim" "qt5-quickcontrols" "qt5-graphicaleffects" "vlc" "ntfs-3g" "thunar" "slock" "xdg-user-dirs" "xorg-server" "unzip" "mousepad" "lxappearance-gtk3" "qt6ct" "ly" "kvantum" "lsd" "starship" "dunst" "udiskie" "ffmpegthumbnailer" "xorg" "nm-connection-editor" "feh" "zoxide" "fzf" "base-devel" "plymouth" "alsa-utils" "firefox" "nomacs" "fastfetch")
 
 FONT_LINK="https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/Meslo.zip"
 FONT_NAME="MesloLGLDZ Nerd Font"
 
 function install_packages() {
     sudo pacman -Sy --noconfirm --needed "${packages[@]}"
-
-    if ! command -v pulseaudio &> /dev/null && ! command -v pipewire &> /dev/null; then
-        server_choice=$(whiptail --title "$TITLE" --radiolist "Choose audioserver (No choice: alsa will be used)" 20 60 3 "pulseaudio" "General purpose sound server." OFF "pipewire" "A new low-level multimedia framework" OFF 3>&1 1>&2 2>&3)
-
-        case $server_choice in
-            "pulseaudio")
-                sudo pacman -Sy --needed --noconfirm "$server_choice" pavucontrol pamixer
-                ;;
-            "pipewire")
-                sudo pacman -Sy --needed --noconfirm "$server_choice" pipewire-pulse pavucontrol pamixer
-                ;;
-        esac
-    fi
     
     mkdir -p $HOME/.local/share/fonts/{ttf,otf}
     cp -r ./fonts/Feather $HOME/.local/share/fonts/ttf/
