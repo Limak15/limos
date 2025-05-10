@@ -1,6 +1,6 @@
 #! /usr/bin/env bash
 
-packages=("git" "wget" "fakeroot" "xfce4-power-manager" "which" "pulseaudio" "pavucontrol" "pamixer" "xmonad" "xmonad-contrib" "polybar" "kitty" "rofi" "flameshot" "neovim" "qt5-quickcontrols" "qt5-graphicaleffects" "vlc" "ntfs-3g" "thunar" "slock" "xdg-user-dirs" "xorg-server" "unzip" "mousepad" "lxappearance-gtk3" "qt6ct" "ly" "kvantum" "lsd" "starship" "dunst" "udiskie" "ffmpegthumbnailer" "xorg" "nm-connection-editor" "feh" "zoxide" "fzf" "base-devel" "plymouth" "alsa-utils" "firefox" "nomacs" "fastfetch")
+packages=("git" "wget" "fakeroot" "xfce4-power-manager" "network-manager-applet" "which" "pulseaudio" "pavucontrol" "pamixer" "xmonad" "xmonad-contrib" "polybar" "kitty" "rofi" "flameshot" "neovim" "qt5-quickcontrols" "qt5-graphicaleffects" "vlc" "ntfs-3g" "thunar" "slock" "xdg-user-dirs" "xorg-server" "unzip" "mousepad" "lxappearance-gtk3" "qt6ct" "ly" "kvantum" "lsd" "starship" "dunst" "udiskie" "ffmpegthumbnailer" "xorg" "nm-connection-editor" "feh" "zoxide" "fzf" "base-devel" "plymouth" "alsa-utils" "firefox" "nomacs" "fastfetch")
 
 FONT_LINK="https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/Meslo.zip"
 FONT_NAME="MesloLGLDZ Nerd Font"
