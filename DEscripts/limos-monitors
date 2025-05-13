@@ -1,0 +1,44 @@
+#!/bin/bash
+
+# Get list of connected monitors
+get_connected_monitors() {
+    xrandr | grep " connected" | cut -d" " -f1 | sort
+}
+
+get_primary_monitor() {
+    xrandr | grep " connected primary" | cut -d" " -f1
+}
+
+# Save inital state
+previous_state=$(get_connected_monitors)
+primary_monitor=$(get_primary_monitor)
+
+# Listen form DRM events
+udevadm monitor --subsystem-match=drm | while read -r line; do
+    # After an event get state of monitors
+    current_state=$(get_connected_monitors)
+
+    # Compare
+    disconnected=$(comm -23 <(echo "$previous_state") <(echo "$current_state"))
+    connected=$(comm -13 <(echo "$previous_state") <(echo "$current_state"))
+
+    if [ -n "$disconnected" ]; then
+        if [ "$disconnected" == "$primary_monitor" ]; then
+            echo "Primary monitor disconnected"
+
+            new_primary_monitor=$(echo "$current_state" | head -n 1)
+
+            xrandr --output "$new_primary_monitor" --primary
+        fi
+    fi
+
+    if [ -n "$connected" ]; then
+        if [ "$connected" == "$primary_monitor" ]; then
+            echo "Primary monitor connected"
+
+            xrandr --output "$connected" --primary
+        fi
+    fi
+
+    previous_state="$current_state"
+done
