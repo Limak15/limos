@@ -1,6 +1,6 @@
 #! /usr/bin/env bash
 
-function startupstuff() {
+function startup() {
     dm=$(systemctl show display-manager.service --property=Id --value)
 
     sudo systemctl disable $dm
