@@ -10,7 +10,7 @@ function configure_desktop() {
     done
 
     cp ./config/bash/bashrc $HOME/.bashrc
-    cp -r ./config/bash/fastfetch $HOME/.config/
+    cp -r ./config/fastfetch $HOME/.config/
     cp ./config/starship/starship.toml $HOME/.config/starship.toml
     cp ./scripts/* $HOME/.local/bin
     sudo cp -r ./config/plymouth /usr/share/plymouth/themes/limos

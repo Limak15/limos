@@ -35,8 +35,10 @@ import XMonad.Hooks.WindowSwallowing
 
 --Actions
 import XMonad.Actions.CycleWS
+import XMonad.Actions.OnScreen
 
--- Bindings for keyboard multimedia keys
+
+-- Bindings for keyboard multimedia keys 
 import Graphics.X11.ExtraTypes.XF86
 
 -- Variables
@@ -103,24 +105,22 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
         ((0                 , xF86XK_AudioPlay), spawn ("$HOME/.local/bin/limos-mediactrl toggle")), -- Play next spotify song
         ((0                 , xK_Print), spawn ("flameshot gui"))                                           -- Take a screenshot 
     ]
+--    ++
+--    [
+--        ((m .|. modm, k), windows $ f i) | 
+--        (i, k) <- zip (XMonad.workspaces conf) [xK_1 .. xK_9], -- mod-[1..9], Switch to workspace N
+--        (f, m) <- [(W.greedyView, 0), (W.shift, shiftMask)]    -- mod-shift-[1..9], Move client to workspace N
+--    ]
     ++
     [
-        ((m .|. modm, k), windows $ f i) | 
-        (i, k) <- zip (XMonad.workspaces conf) [xK_1 .. xK_9], -- mod-[1..9], Switch to workspace N
-        (f, m) <- [(W.greedyView, 0), (W.shift, shiftMask)]    -- mod-shift-[1..9], Move client to workspace N
+        ((modm, k), windows (viewOnScreen sc ws)) |
+        (ws, k, sc) <- zip3 (map show [1..6] ++ map show [7..9]) [xK_1..xK_9] (replicate 6 0 ++ replicate 4 1)
     ]
-    -- For two monitor setup
-    -- Workspaces 7 to 9 opens on left monitor rest on the right
-    -- ++
-    --[
-    --    ((modm, k), windows (viewOnScreen sc ws)) |
-    --    (ws, k, sc) <- zip3 (map show [1..6] ++ map show [7..9]) [xK_1..xK_9] (replicate 6 1 ++ replicate 4 0)
-    --]
-    -- ++
-    --[ 
-    --    ((modm .|. shiftMask, k), windows (W.shift ws)) |
-    --    (ws, k) <- zip (map show [1..9]) [xK_1..xK_9]
-    --]
+    ++
+    [ 
+        ((modm .|. shiftMask, k), windows (W.shift ws)) |
+        (ws, k) <- zip (map show [1..9]) [xK_1..xK_9]
+    ]
     ++
     [
         ((m .|. modm, key), screenWorkspace sc >>= flip whenJust (windows . f)) | 
