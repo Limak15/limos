@@ -1,41 +1,68 @@
-### About LimOS
+# 🚀 LimOS – Arch Linux post installation script
+
+![LimOS Banner](screenshots/banner.png)
+
 ---
-**LimOS** is a post installation script that will install and configure window manager along with all applications and utilities that are needed to create fully functional desktop environment. This script should work on every Arch based distribution.
 
-![desktop!](https://gitlab.com/Limak01/dotfiles/-/raw/master/.screenshots/main.png)
+## 🧠 What is LimOS?
 
+**LimOS** is my personal installation script for Arch Linux that will install and configure xmonad window manager along with all applications, dotfiles (in config folder) and utilities that are needed to create fully functional desktop environment.
 
-### installation
 ---
-```
-git clone https://gitlab.com/limakos/Limos
+
+## 🧰 Main functions
+
+- ✅ Automatic installation of xmonad, polybar and all needed software
+- ✅ Chaotic AUR repository
+- ✅ **dotfiles** implementation with symbolic links
+- ✅ GTK and QT theme
+- ✅ Custom .bashrc with aliases and utility functions
+  
+---
+
+## ⚙️ Installation
+
+```bash
+git clone https://github.com/Limak15/limos.git
 cd limos
 ./limOS
-
 ```
 
-### Basic keybinds
 ---
-**Note:** _mod is by default bound to windows key_
-|Keys|Description|
-|---|---|
-|<kbd>mod</kbd> + <kbd>shift</kbd> + <kbd>enter</kbd>|Open terminal (kitty)|
-|<kbd>mod</kbd> + <kbd>p</kbd>|Open application finder (rofi)|
-|<kbd>mod</kbd> + <kbd>z</kbd>|Open powermenu (rofi)|
-|<kbd>mod</kbd> + <kbd>shift</kbd> + <kbd>c</kbd>|Close active window|
-|<kbd>mod</kbd> + <kbd>1 to 9</kbd>|Switch workspace|
-|<kbd>mod</kbd> + <kbd>shift</kbd> + <kbd>1 to 9</kbd>|Move active window to another workspace|
 
-#### Volume nad audio control
-**Note:** _If you don't have xF86XK keys on your keyboard u can change bindings in xmonad config file in ~/.config/xmonad/xmonad.hs_
+## 🖼️ Desktop screenshots
 
-**Note:** _By default only 3 music players are available to control strawberry, spotify, DeaDBeeF.If you want to add more players edit ~/.local/bin/limos-mediactrl and add your player name here `players=("strawberry" "spotify" "DeaDBeeF")`. The player name must be identical to the one used in dbus_
-|Keys|Description|
-|---|---|
-|<kbd>xF86XK_AudioRaiseVolume</kbd>|Raise volume|
-|<kbd>xF86XK_AudioLowerVolume</kbd>|Lower volume|
-|<kbd>xF86XK_AudioMute</kbd>|Audio mute|
-|<kbd>xF86XK_AudioNext</kbd>|Play next song|
-|<kbd>xF86XK_AudioPrev</kbd>|Play previous song|
-|<kbd>xF86XK_AudioPlay</kbd>|Toggle play or pause|
+<table>
+<tr>
+    <td>
+        <img alt="Desktop screenshot 1" src="screenshots/limos1.png" />
+    </td>
+    <td>
+        <img alt="Desktop screenshot 2" src="screenshots/limos2.png" />
+    </td>
+</tr>
+<tr>
+    <td>
+        <img alt="Desktop screenshot 3" src="screenshots/limos3.png" />
+    </td>
+    <td>
+        <img alt="Desktop screenshot 4" src="screenshots/limos4.png" />
+    </td>
+</tr>
 
+</table>
+
+---
+
+## 📁 Project structure
+
+```bash
+limos/
+├── limOS               # Main installation script
+├── src/                # Rest of the installation scripts
+├── scripts/            # Desktop environment scripts (changing volume level etc.)
+├── config/             # Configuration files for bash, xmonad etc.
+├── fonts/              # Fonts folder
+├── themes/             # GTK and QT themes folder
+└── screenshots/        # Screenshots for README
+```
