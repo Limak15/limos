@@ -6,16 +6,14 @@ function configure_desktop() {
     [ ! -d $HOME/.local/bin ] && mkdir -p $HOME/.local/bin
 
     for dir in config/{polybar,xmonad,rofi,kitty,dunst,picom,fastfetch}; do
-        ln -s "$(pwd)/$dir" "$HOME/.config/"
+        cp -r "$dir" "$HOME/.config/"
     done
-
-    ln -s "$(pwd)/config/bash/bashrc" $HOME/.bashrc
-    ln -s "$(pwd)/config/starship/starship.toml" $HOME/.config/starship.toml
+    
+    cp ./config/bash/bashrc $HOME/.bashrc
+    cp -r ./config/fastfetch $HOME/.config/
+    cp ./config/starship/starship.toml $HOME/.config/starship.toml
+    cp ./scripts/* $HOME/.local/bin
     sudo cp -r ./config/plymouth /usr/share/plymouth/themes/limos
-
-    for script in config/*; do
-        ln -s "$(pwd)/$script" $HOME/.local/bin/
-    done
 
     [ ! -d $HOME/.icons ] && mkdir $HOME/.icons
     [ ! -d $HOME/.themes ] && mkdir $HOME/.themes
