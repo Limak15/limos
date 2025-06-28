@@ -11,7 +11,7 @@
 
 ## 🧠 What is LimOS?
 
-**LimOS** is my personal installation script for Arch Linux that will install and configure xmonad window manager along with all applications, dotfiles (in config folder) and utilities that are needed to create fully functional desktop environment.
+**LimOS** - Arch Linux post installation script that will install and configure window manager along with all applications and utilities that are needed to create fully functional desktop environment.
 
 ---
 
