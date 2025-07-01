@@ -24,4 +24,13 @@ function configure_desktop() {
     echo "feh --no-fehbg --bg-scale '/usr/share/backgrounds/limos-wallpapers/limos-dark.png'" > ~/.fehbg
     chmod 755 ~/.fehbg
     echo "~/.fehbg &" > ~/.xsession
+
+    [ ! -d $GTK_CONFIG_PATH ] && mkdir $GTK_CONFIG_PATH
+    [ ! -f "$GTK_CONFIG_PATH/settings.ini" ] && touch "$GTK_CONFIG_PATH/settings.ini"
+
+    gtk_config="[Settings]
+    gtk-theme-name=$GTK_THEME
+    gtk-icon-theme-name=$ICON_THEME"
+
+    echo "$gtk_config" >> "$GTK_CONFIG_PATH/settings.ini"
 }

@@ -33,6 +33,12 @@
 # DESC: Arch Linux post installation script that will install and configure window manager along with all applications and utilities that are needed to create fully functional desktop environment.
 # WARNING: Run this script at your own risk.
 
+GTK_THEME="Fluent-green-Dark"
+ICON_THEME="Fluent-green-dark"
+QT_THEME="Fluent-green-dark"
+
+GTK_CONFIG_PATH="$HOME/.config/gtk-3.0"
+
 source "./src/output.sh"
 source "./src/repos.sh"
 source "./src/config.sh"
