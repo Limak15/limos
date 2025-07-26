@@ -12,7 +12,6 @@ import qualified Data.Map as M
 --Layout
 import XMonad.Layout.LayoutModifier
 import XMonad.Layout.Spacing
-import XMonad.Layout.NoBorders (smartBorders)
 import XMonad.Layout.ResizableTile
 import XMonad.Layout.LimitWindows (limitWindows, increaseLimit, decreaseLimit)
 
@@ -188,7 +187,7 @@ main = do
         focusedBorderColor = myFocusedBorderColor,
         keys               = myKeys,
         mouseBindings      = myMouseBindings,
-        layoutHook         = mySpacing 5 $ smartBorders $ myLayout,
+        layoutHook         = mySpacing 5 $ myLayout,
         manageHook         = myManageHook ,
         startupHook        = myStartupHook
       }
