@@ -96,6 +96,7 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
         ((modm              , xK_period), sendMessage (IncMasterN (-1))),                                   -- Deincrement the number of windows in the master area
         ((modm .|. shiftMask, xK_q     ), io (exitWith ExitSuccess)),                                       -- Quit xmonad
         ((modm              , xK_q     ), spawn "xmonad --recompile; xmonad --restart"),                    -- Restart xmonad
+        ((modm              , xK_b     ), spawn "polybar-msg cmd toggle"),                    -- Show/hide polybar 
         ((0                 , xF86XK_AudioRaiseVolume), spawn ("$HOME/.local/bin/limos-changevolume up")),        -- Volume up
         ((0                 , xF86XK_AudioLowerVolume), spawn ("$HOME/.local/bin/limos-changevolume down")),      -- Volume down
         ((0                 , xF86XK_AudioMute), spawn ("$HOME/.local/bin/limos-changevolume mute")),             -- Mute volume
