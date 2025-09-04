@@ -19,8 +19,13 @@ function install_packages() {
         unzip "$tmp/Meslo.zip" -d "$HOME/.local/share/fonts/ttf/Meslo/"
     fi
 
-    git clone 'https://gitlab.com/limakos/limos-wallpapers.git'
-
     [ ! -d /usr/share/backgrounds ] && sudo mkdir /usr/share/backgrounds
-    sudo mv limos-wallpapers /usr/share/backgrounds/
+
+    if [ ! -d /usr/share/background/limos-wallpapers ]; then
+        git clone 'https://gitlab.com/limakos/limos-wallpapers.git'
+
+        sudo mv limos-wallpapers /usr/share/backgrounds/
+    else
+        echo "limos-wallpapers directory already exists"
+    fi
 }
