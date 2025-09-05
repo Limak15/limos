@@ -155,6 +155,7 @@ myManageHook = composeAll
      (className =? "firefox" <&&> resource =? "Dialog") --> doFloat  -- Float Firefox Dialog
     , className =? "MPlayer"                 --> doFloat
     , resource  =? "pavucontrol"             --> doCenterFloat
+    , resource  =? "thunar"                  --> doCenterFloat
     , resource  =? "desktop_window"          --> doIgnore
     , resource  =? "kdesktop"                --> doIgnore 
     , isFullscreen -->  doFullFloat
