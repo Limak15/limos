@@ -156,6 +156,7 @@ myManageHook = composeAll
     , className =? "MPlayer"                 --> doFloat
     , resource  =? "pavucontrol"             --> doCenterFloat
     , resource  =? "thunar"                  --> doCenterFloat
+    , className =? "Xfce4-power-manager-settings" --> doCenterFloat
     , resource  =? "desktop_window"          --> doIgnore
     , resource  =? "kdesktop"                --> doIgnore 
     , isFullscreen -->  doFullFloat
