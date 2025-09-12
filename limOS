@@ -39,6 +39,17 @@ QT_THEME="Fluent-green-dark"
 
 GTK_CONFIG_PATH="$HOME/.config/gtk-3.0"
 
+POLYBAR_MODULES_LAPTOP="kernel cpu memory wireless-network battery pulseaudio date"
+POLYBAR_MODULES_PC="kernel cpu memory wired-network pulseaudio date"
+
+if [ -d /sys/class/power_supply/BAT0 ] || grep -iq touchpad /proc/bus/input/devices; then
+    COMPUTER_TYPE="LAPTOP"
+else
+    COMPUTER_TYPE="PC"
+fi
+
+NETWORK_INTERFACE=$(ip route | grep '^default' | awk '{print $5}')
+
 source "./src/output.sh"
 source "./src/repos.sh"
 source "./src/config.sh"

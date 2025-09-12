@@ -164,10 +164,8 @@ myManageHook = composeAll
 --Executes every time xmonad starts
 myStartupHook = do
   spawnOnce "dunst &"
-  spawnOnce "udiskie --tray &"
+  spawnOnce "udiskie &"
   spawnOnce "xfce4-power-manager &"
-  spawnOnce "nm-applet &"
-  spawnOnce "flameshot &"
   spawn "$HOME/.config/polybar/launch.sh"
 
 --Gaps between windows

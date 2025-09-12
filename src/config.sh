@@ -15,6 +15,15 @@ function configure_desktop() {
     cp ./scripts/* $HOME/.local/bin
     sudo cp -r ./config/plymouth /usr/share/plymouth/themes/limos
 
+    if [[ $COMPUTER_TYPE == LAPTOP ]];
+    then
+        sed -i "s/<?modules?>/$POLYBAR_MODULES_LAPTOP/" $HOME/.config/polybar/config.ini 
+    else
+        sed -i "s/<?modules?>/$POLYBAR_MODULES_PC/" $HOME/.config/polybar/config.ini 
+    fi
+
+    sed -i "s/<?network_interface?>/$NETWORK_INTERFACE/g" $HOME/.config/polybar/config.ini 
+
     [ ! -d $HOME/.icons ] && mkdir $HOME/.icons
     [ ! -d $HOME/.themes ] && mkdir $HOME/.themes
 
